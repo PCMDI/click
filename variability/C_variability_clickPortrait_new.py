@@ -1,22 +1,34 @@
 from __future__ import print_function
 import os
 import sys
-import MV2
 import vcs
 import numpy
 import pcmdi_metrics
 import pcmdi_metrics.graphics.portraits
 import cdms2
-from vcs.utils import meshToCoords, mapPng
+from vcs.utils import meshToPngCoords, mapPng
 import genutil
 import shutil
 
 #pathout = '/work/gleckler1/www/pptest/'
 pathout = '/work/gleckler1/www/portraits/'
 
+parser = pcmdi_metrics.pcmdi.pmp_parser.PMPParser()
 
-levs = [-1e+20, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1e+20]
-cols = [144, 145, 146, 147, 'lightgreen', 'green', 'green', 'darkgreen', 152, 153, 154, 155]
+parser.use("--results_dir")
+
+parser.add_argument("--data_path", help="input data path", default="data/v1.1")
+parser.add_argument("--title", help="title for plot")
+parser.add_argument("--levels", help="list of levels", default=[])
+parser.add_argument("--colors", help="list of colors", default=[])
+args = parser.get_parameter()
+
+pathout = args.results_dir
+tit = args.title
+
+levs = args.levels
+cols = args.colors
+
 P = pcmdi_metrics.graphics.portraits.Portrait()
 P1 = pcmdi_metrics.graphics.portraits.Portrait()
 
@@ -24,11 +36,10 @@ P.PLOT_SETTINGS.levels = levs
 P1.PLOT_SETTINGS.levels = levs
 
 bg = True
-geometry = (2400,1600)
 geometry = (1200,800)
 x = vcs.init(geometry=geometry, bg=bg)
 
-f=cdms2.open("portrait.nc")
+f=cdms2.open(os.path.join(args.data_path,"portrait.nc"))
 
 def prep_read(var):
     axes = []
@@ -100,21 +111,20 @@ header.To.valign = "top"
 header.x = .4
 header.y = .95
 
-tit = "Ratio of Mod CBF PC1 std to obs PC1 std with 20CR vs ERA20C"   #_v3.1b_vs_v3.4b late 20th"
 header.string = [tit]
 
 x.plot(header, bg=bg)
 
 
-x.png(pathout + 'clickable_variability.png')
+x.png(os.path.join(pathout, 'clickable_variability.png'))
 
-clickname = pathout + "clickable_variability.png"
+clickname = os.path.join(pathout, "clickable_variability.png")
 clickname_np = "clickable_variability.png"
 
-areas1 = meshToCoords(mesh1,template1,[meshfill1.datawc_x1,meshfill1.datawc_x2,meshfill1.datawc_y1,meshfill1.datawc_y2],png=clickname)
-areas1b = meshToCoords(mesh1b,template1b,[meshfill1b.datawc_x1,meshfill1b.datawc_x2,meshfill1b.datawc_y1,meshfill1b.datawc_y2],png=clickname)
-areas2 = meshToCoords(mesh2,template2,[meshfill2.datawc_x1,meshfill2.datawc_x2,meshfill2.datawc_y1,meshfill2.datawc_y2],png=clickname)
-areas2b = meshToCoords(mesh2b,template2b,[meshfill2b.datawc_x1,meshfill2b.datawc_x2,meshfill2b.datawc_y1,meshfill2b.datawc_y2],png=clickname)
+areas1 = meshToPngCoords(mesh1,template1,[meshfill1.datawc_x1,meshfill1.datawc_x2,meshfill1.datawc_y1,meshfill1.datawc_y2],png=clickname)
+areas1b = meshToPngCoords(mesh1b,template1b,[meshfill1b.datawc_x1,meshfill1b.datawc_x2,meshfill1b.datawc_y1,meshfill1b.datawc_y2],png=clickname)
+areas2 = meshToPngCoords(mesh2,template2,[meshfill2.datawc_x1,meshfill2.datawc_x2,meshfill2.datawc_y1,meshfill2.datawc_y2],png=clickname)
+areas2b = meshToPngCoords(mesh2b,template2b,[meshfill2b.datawc_x1,meshfill2b.datawc_x2,meshfill2b.datawc_y1,meshfill2b.datawc_y2],png=clickname)
 
 #maps_template = genutil.StringConstructor("/work/lee1043/cdat/pmp/variability_mode/scripts_consistency_test_b/SAM_redo_with_late_20C_OBS/result_v3.1b_3/analysis/5panel_eofs_pcs/%(MODE)/Panel7_%(MODE)_%(SEASON)_%(MODEL)_%(REALIZATION).png")
 maps_template = genutil.StringConstructor("variability/plots/%(MODE)/Panel7_%(MODE)_%(SEASON)_%(MODEL)_%(REALIZATION).png")
@@ -180,12 +190,12 @@ targets = numpy.concatenate((targets1,targets1b,targets2,targets2b))
 tooltips = numpy.concatenate((tooltips1,tooltips1b,tooltips2,tooltips2b))
 
 #pathout = '/work/gleckler1/www/pptest/'
-pathout = '/work/gleckler1/www/portraits/'
 #pathout = ''
 img = mapPng(clickname_np,areas,targets,tooltips,width=geometry[0],height=geometry[1])
 #map_element = vcs.utils.mapPng(click_name + ".png",click_areas,targets,tooltips,width=geo["width"],height=geo["height"])
 
-with open(pathout +  "clickable_variability.html","w") as f:
+fnm = os.path.join(pathout, "clickable_variability.html")
+with open(fnm,"w") as f:
     f.write("<html><head>")
     f.write("<script type='text/javascript' src='mapper.js'></script>")
     f.write("<script type='text/javascript' src='cvi_tip_lib.js'></script>")
@@ -198,6 +208,6 @@ with open(pathout +  "clickable_variability.html","w") as f:
     #f.write("$('area').hover(function(){$(this).css('border','5px');},function(){$(this).css('border','0px');});")
     f.write("<h4> The plot above summarizes the ratio of simulated to observed variability for a selection of extratropical modes and seasons.  Results are shown for individual realizations from the CMIP5 database of historical simulations.  The upper left triangle of each square show results with data from the 20CR reanalysis as the reference dataset, whereas the lower triangle is based on data from ERA20C reanalysis.  In each case, the model anomaly time series is projected onto the leading EOF of the reference dataset which provides a Common Basis Function (CBF) for comparing models with the reference data.   Diagnostics for each case can be reached by clicking on the triangles in the plot, and show: a) andb) the leading EOF of each reference dataset, c) the model pattern estimated from projecting the anomaly time series on the reference CBF pattern, d-f) EOFs 1-3 from the model and g) PC time series showing results from the model.  Results are from Lee et al. (in review). </h4>")
     f.write("</body></head></html>")
-print("Done open: clickable_map.html")
+print("Done open: {}".format(fnm))
  
 os.popen('chmod -R 775 %s/*' % pathout).readlines()
