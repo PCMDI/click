@@ -51,7 +51,7 @@ def createModalTargets(data, targets_template, season=""):
 
 
 def write_modal_html(html_file, map_element, share_pth):
-    print "TIPS AND MAPPER:", share_pth+"/mapper.js"
+    print("TIPS AND MAPPER:", share_pth+"/mapper.js")
     if not os.path.exists(share_pth):
         os.makedirs(share_pth)
     for file in ["mapper.js", "modal.js", "cvi_tip_lib.js", "tooltip.css"]:

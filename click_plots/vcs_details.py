@@ -88,7 +88,7 @@ def setup_portrait(P):
     vcs.scriptrun(os.path.join(sys.prefix, "share", "pmp",
                              "graphics", "vcs", "portraits.scr"))
     SET.colormap = 'bl_rd_12'
-    cols = vcs.getcolors(SET.levels, range(144, 156), split=1)
+    cols = vcs.getcolors(SET.levels, list(range(144, 156)), split=1)
     SET.fillareacolors = cols
     SET.parametertable.expansion = 100
 

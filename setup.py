@@ -1,4 +1,5 @@
-from distutils.core import setup
+from __future__ import print_function
+from setuptools import setup, find_packages
 import glob
 import subprocess
 import os
@@ -31,15 +32,15 @@ try:
     commit = p.stdout.readlines()[0].split()[1]
 except:
     commit = ""
-f = open("lib/version.py", "w")
-print >>f, "__version__ = '%s'" % Version
-print >>f, "__git_tag_describe__ = '%s'" % descr
-print >>f, "__git_sha1__ = '%s'" % commit
+f = open("click_plots/version.py", "w")
+print("__version__ = '%s'" % Version, file=f)
+print("__git_tag_describe__ = '%s'" % descr, file=f)
+print("__git_sha1__ = '{}'".format(commit.decode("utf-8")), file=f)
 f.close()
 
 
-packages = {'click_plots': 'lib',
-            }
+packages = find_packages()
+
 scripts = ['modal/generate_modal.py']
 
 data_files = [
@@ -51,8 +52,7 @@ setup(name='click_plots',
       author='PCMDI',
       description='tools to click on plots',
       url='http://github.com/PCMDI/click',
-      packages=packages.keys(),
-      package_dir=packages,
+      packages=packages,
       scripts=scripts,
       data_files=data_files
       )
