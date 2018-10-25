@@ -14,7 +14,7 @@ parser = pcmdi_metrics.pcmdi.pmp_parser.PMPParser()
 
 parser.use("--results_dir")
 
-parser.add_argument("--data_path", help="input data path", default="data/v1.1")
+parser.add_argument("--data_path", help="input data path", default="data/v1.0")
 parser.add_argument("--statistic", help="statistic to use",
                     default="rms_devam_xy")
 parser.add_argument("--title", help="title for plot")
@@ -23,17 +23,20 @@ parser.add_argument("--files_glob_pattern", help="glob pattern to select correct
 parser.add_argument("--bad", help="list of bad models", default=[])
 parser.add_argument("--seasons", help="seasons to process",
                     default=['djf', 'mam', 'jja', 'son'])
-parser.add_argument("--region", help="region to use")
+parser.add_argument("--region", help="region to use", default="global")
 parser.add_argument("--normalize", action="store_true",
                     help="normalize results by median", default=False)
-
+parser.add_argument("--mode", help="mode to use", default="NAO")
+parser.add_argument("--rip", help="", default="r1i1p1")
 parser.add_argument("--targets_template",
+                    default="data/pngs/%(mode)/Panel7_%(mode)_%(season)_%(model)_%(rip).png"
                     help="template to find targets destination")
+parser.add_argument("--statistic", "--stat", dest="stat",
+                    help="statistic to use", default="bias_xy")
 args = parser.get_parameter()
 
 targets_template = genutil.StringConstructor(args.targets_template)
 
-exp = args.exp
 injpath = args.data_path
 pathout = args.results_dir
 tit = args.title
@@ -41,7 +44,7 @@ stat = args.stat
 bad_models = args.bad
 seasons = args.seasons
 targets_template.stat = stat
-head1 = 'CMIP5 ' + exp.upper() + ' simulations (1981-2005 climatology)'
+head1 = 'CMIP5 simulations (1981-2005 climatology)'
 
 head2 = 'Relative errors (statistics normalized by median error)'
 
@@ -80,7 +83,8 @@ if args.normalize:
     # normalize
     data = (data-median) / median
 
-yax = [s.encode('utf-8')+"  " for s in models]
+
+yax = [s+"  " for s in models]
 
 # CHANGE VARIABLE NAMES
 
@@ -98,7 +102,7 @@ mesh, template, meshfill = P.plot(data[..., 0], x=x)
 
 png_file = os.path.join(pathout, "clickable6.png")
 x.png(png_file)
-
+print("SENDING:", targets_template.template)
 targets, tips, extras = click_plots.createModalTargets(data[..., 0], targets_template)
 
 # Creates clickable polygons numpy arrays

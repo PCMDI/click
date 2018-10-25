@@ -19,6 +19,7 @@ def createModalTargets(data, targets_template, season=""):
         targets_template.variable = variable
         # X axis
         for model_index, model in enumerate(model_list):
+            print("Dealing with:", model_index, model, targets_template.template)
             targets_template.model = model
             fnm = targets_template()
             # Here we test if
