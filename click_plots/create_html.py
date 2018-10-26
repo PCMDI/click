@@ -1,9 +1,10 @@
 import os
 import sys
 import shutil
+import vcs
 
 
-def createModalTargets(data, targets_template, season=""):
+def createModalTargets(data, targets_template, x_key, y_key):
     # Season is optional. If used, we expect a single string value that indicates the season
     # Axes have been "decorated" via P.decorate()
     outs = []  # list of target html files
@@ -13,50 +14,52 @@ def createModalTargets(data, targets_template, season=""):
     indx = 0
     # Y axis
 
-    variable_list = data.getAxis(0).id.split("___")
-    model_list = data.getAxis(-1).id.split("___")
-    for variable_index, variable in enumerate(variable_list):
-        targets_template.variable = variable
+    yaxis_list = data.getAxis(0).id.split("___")
+    xaxis_list = data.getAxis(-1).id.split("___")
+    for y_index, y_value in enumerate(yaxis_list):
+        setattr(targets_template, y_key, y_value.strip())
         # X axis
-        for model_index, model in enumerate(model_list):
-            print("Dealing with:", model_index, model, targets_template.template)
-            targets_template.model = model
+        for x_index, x_value in enumerate(xaxis_list):
+            print("Dealing with:", x_index, x_value, targets_template.template)
+            setattr(targets_template, x_key, x_value.strip())
             fnm = targets_template()
+            print("\t:filename:",fnm)
             # Here we test if
             outs.append(fnm)
             image = outs[-1].replace("html", "png")
             value = flt[0]
             # Each area must know which areas are next to it so the modal can traverse them
-            # We assign an id of the form "model-variable-season" to each area
+            # We assign an id of the form "x_value-y_value" to each area
             # We then save neightbor ids in "data-" tags that the javascript will use to traverse by model/variable/etc...
-            model_left = model_list[model_index-1]+"-" + \
-                variable+"-"+season if model_index != 0 else ""
-            model_right = model_list[model_index+1]+"-"+variable + \
-                "-"+season if model_index+1 < len(model_list) else ""
-            variable_left = model+"-" + \
-                variable_list[variable_index-1]+"-" + \
-                season if variable_index != 0 else ""
-            variable_right = model+"-" + \
-                variable_list[variable_index+1]+"-" + \
-                season if variable_index+1 < len(variable_list) else ""
-            tips.append("Model: %s<br>Variable: %sValue: %.3g<div id='thumbnail'><img src='%s' width=200></div>" %
-                        (model, variable, value, image))
-            html_id = "{}-{}-{}".format(model, variable, season)
+            x_left = xaxis_list[x_index-1]+"-" + \
+                y_value if x_index != 0 else ""
+            x_right = xaxis_list[x_index+1]+"-"+y_value \
+                if x_index+1 < len(xaxis_list) else ""
+            y_left = x_value+"-" + \
+                yaxis_list[y_index-1] \
+                if y_index != 0 else ""
+            y_right = x_value+"-" + \
+                yaxis_list[y_index+1] \
+                if y_index+1 < len(yaxis_list) else ""
+            tips.append("%s: %s<br>%s: %sValue: %.3g<div id='thumbnail'><img src='%s' width=200></div>" %
+                        (x_key, x_value, y_key, y_value, value, image))
+            html_id = "{}-{}".format(x_value, y_value)
             extras.append("id='{}' data-value='{}' data-image='{}'"
                           "data-model='{}' data-modelLeft='{}' data-modelRight='{}'"
                           "data-variable='{}' data-variableLeft='{}' data-variableRight='{}'"
                           "data-season='{}'"  # data-seasonLeft='{}' data-seasonRight='{}'"
-                          .format(html_id, value, image, model, model_left, model_right, variable, variable_left, variable_right, season))
+                          .format(html_id, value, image, x_value, x_left, x_right, y_value, y_left, y_right, ""))
             indx += 1
     return outs, tips, extras
 
 
-def write_modal_html(html_file, map_element, share_pth):
+def write_modal_html(html_file, map_element, share_pth ,pathout):
     print("TIPS AND MAPPER:", share_pth+"/mapper.js")
-    if not os.path.exists(share_pth):
-        os.makedirs(share_pth)
+    full_share_path = os.path.join(pathout, share_pth)
+    if not os.path.exists(full_share_path):
+        os.makedirs(full_share_path)
     for file in ["mapper.js", "modal.js", "cvi_tip_lib.js", "tooltip.css"]:
-        shutil.copy2(os.path.join(sys.prefix, "share", "vcs", file), share_pth)
+        shutil.copy2(os.path.join(vcs.vcs_egg_path, file), full_share_path)
     with open(html_file, "w") as f:
         f.write("<html><head>")
         f.write('<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>')
