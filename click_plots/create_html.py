@@ -2,9 +2,12 @@ import os
 import sys
 import shutil
 import vcs
+import pkg_resources
+import warnings
 
+click_egg = pkg_resources.resource_filename(pkg_resources.Requirement.parse("click_plots"), "share/click_plots")
 
-def createModalTargets(data, targets_template, x_key, y_key):
+def createModalTargets(data, targets_template, x_key, y_key, modal=None):
     # Season is optional. If used, we expect a single string value that indicates the season
     # Axes have been "decorated" via P.decorate()
     outs = []  # list of target html files
@@ -44,22 +47,30 @@ def createModalTargets(data, targets_template, x_key, y_key):
             tips.append("%s: %s<br>%s: %sValue: %.3g<div id='thumbnail'><img src='%s' width=200></div>" %
                         (x_key, x_value, y_key, y_value, value, image))
             html_id = "{}-{}".format(x_value, y_value)
-            extras.append("id='{}' data-value='{}' data-image='{}'"
-                          "data-model='{}' data-modelLeft='{}' data-modelRight='{}'"
-                          "data-variable='{}' data-variableLeft='{}' data-variableRight='{}'"
-                          "data-season='{}'"  # data-seasonLeft='{}' data-seasonRight='{}'"
+            extras.append("id='{}' data-value='{}' data-image='{}' "
+                          "data-model='{}' data-modelLeft='{}' data-modelRight='{}' "
+                          "data-variable='{}' data-variableLeft='{}' data-variableRight='{}' "
+                          "data-season='{}' "  # data-seasonLeft='{}' data-seasonRight='{}'"
                           .format(html_id, value, image, x_value, x_left, x_right, y_value, y_left, y_right, ""))
             indx += 1
     return outs, tips, extras
 
 
-def write_modal_html(html_file, map_element, share_pth ,pathout):
+def write_modal_html(html_file, map_element, share_pth ,pathout, modal=None):
     print("TIPS AND MAPPER:", share_pth+"/mapper.js")
     full_share_path = os.path.join(pathout, share_pth)
     if not os.path.exists(full_share_path):
         os.makedirs(full_share_path)
-    for file in ["mapper.js", "modal.js", "cvi_tip_lib.js", "tooltip.css"]:
+    for file in ["mapper.js", "cvi_tip_lib.js", "tooltip.css"]:
         shutil.copy2(os.path.join(vcs.vcs_egg_path, file), full_share_path)
+    if modal is not None:
+        if not os.path.exists(modal):
+            warnings.warn("Could not locate your modal file {}, falling back on default".format(modal))
+            modal = os.path.join(click_egg,"js", "modal.js")
+    else:
+        modal = os.path.join(click_egg,"js", "modal.js")
+    shutil.copy2(modal, full_share_path)
+
     with open(html_file, "w") as f:
         f.write("<html><head>")
         f.write('<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>')

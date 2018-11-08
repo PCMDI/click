@@ -35,6 +35,7 @@ parser.add_argument("--targets_template",
                     help="template to find targets destination")
 parser.add_argument("--flip", action="store_true", default=False)
 parser.add_argument("--names-update", help="a dictionary to update axes labels", default={})
+parser.add_argument("--modal", help="use a custom modal file", default=None)
 
 # first make sure we do not use --help yet
 yanked_help = False
@@ -88,7 +89,6 @@ for k in json_keys:
         if not isinstance(att, (list, tuple)):
             setattr(targets_template, k[2:], att)
 
-print("DICT FOR JSNO:",dic)
 data = J(**dic)(squeeze=1)
 
 if args.normalize is not False:
@@ -113,7 +113,6 @@ full_dic = {'pr': 'Precipitation'}
 full_dic.update(args.names_update)
 x_key = data.getAxis(-1).id
 y_key = data.getAxis(-2).id
-print("KEY: ______________________", x_key, y_key)
 yax = [full_dic.get(s,s)+"  " for s in data.getAxis(-2)]
 xax = [full_dic.get(s, s)+"   " for s in data.getAxis(-1)]
 
@@ -158,6 +157,6 @@ os.chdir(pth)
 fnm = os.path.join(pathout, "clickable_6.html")
 
 share_pth = "js"
-click_plots.write_modal_html(fnm, map_element,share_pth, args.results_dir)
+click_plots.write_modal_html(fnm, map_element,share_pth, args.results_dir, modal=args.modal)
 
 print("Geenrated html at:", fnm)
