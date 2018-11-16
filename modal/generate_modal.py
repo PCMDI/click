@@ -36,6 +36,7 @@ parser.add_argument("--targets_template",
 parser.add_argument("--flip", action="store_true", default=False)
 parser.add_argument("--names-update", help="a dictionary to update axes labels", default={})
 parser.add_argument("--modal", help="use a custom modal file", default=None)
+parser.add_argument("--merge", help="merge json dimensions together", default=None)
 
 # first make sure we do not use --help yet
 yanked_help = False
@@ -88,7 +89,8 @@ for k in json_keys:
         dic[k[2:]] = att
         if not isinstance(att, (list, tuple)):
             setattr(targets_template, k[2:], att)
-
+if args.merge is not None:
+    dic["merge"] = args.merge
 data = J(**dic)(squeeze=1)
 
 if args.normalize is not False:

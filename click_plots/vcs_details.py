@@ -1,6 +1,9 @@
 import vcs
 import os
 import sys
+import pkg_resources
+egg_path = pkg_resources.resource_filename(pkg_resources.Requirement.parse("pcmdi_metrics"), "share/pmp")
+
 
 def setup_portrait(P):
     SET = P.PLOT_SETTINGS
@@ -57,8 +60,8 @@ def setup_portrait(P):
     #SET.ytic1.x2 = SET.x2
 
     # Logo can be a string or an image
-    SET.logo = P.PLOT_SETTINGS.logo = os.path.join(
-        sys.prefix, "share", "pmp", "graphics", "png", "160915_PCMDI_logo_348x300px.png")
+    SET.logo = P.PLOT_SETTINGS.logo = os.path.join(egg_path,
+        "graphics", "png", "160915_PCMDI_logo_348x300px.png")
     SET.logo.x = .93
     SET.logo.y = .95
     SET.logo.width = 85
@@ -85,7 +88,7 @@ def setup_portrait(P):
 
     # Colormap
     #SET.colormap = "inferno"
-    vcs.scriptrun(os.path.join(sys.prefix, "share", "pmp",
+    vcs.scriptrun(os.path.join(egg_path,
                              "graphics", "vcs", "portraits.scr"))
     SET.colormap = 'bl_rd_12'
     cols = vcs.getcolors(SET.levels, list(range(144, 156)), split=1)
