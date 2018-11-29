@@ -29,49 +29,49 @@ $( document ).ready(function() {
         element = e.target
         jQuery('#tooltip-modal').modal()
     })
-    $("#modal-content").on("click", ".btn.model.decrement",function(e){
-        console.log("model.decrement")
-        var el = document.getElementById(element.dataset.modelleft)
+    $("#modal-content").on("click", ".btn.xaxis.decrement",function(e){
+        console.log("xaxis.decrement")
+        var el = document.getElementById(element.dataset.xaxisleft)
         if(el){
             element = el
             populateModal()
         }
     })
-    $("#modal-content").on("click", ".btn.model.increment",function(e){
-        console.log("model.increment")
-        var el = document.getElementById(element.dataset.modelright)
+    $("#modal-content").on("click", ".btn.xaxis.increment",function(e){
+        console.log("xaxis.increment")
+        var el = document.getElementById(element.dataset.xaxisright)
         if(el){
             element = el
             populateModal()
         }
     })
-    $("#modal-content").on("click", ".btn.variable.decrement",function(e){
-        console.log("variable.decrement")
-        var el = document.getElementById(element.dataset.variableleft)
+    $("#modal-content").on("click", ".btn.yaxis.decrement",function(e){
+        console.log("yaxis.decrement")
+        var el = document.getElementById(element.dataset.yaxisleft)
         if(el){
             element = el
             populateModal()
         }
     })
-    $("#modal-content").on("click", ".btn.variable.increment",function(e){
-        console.log("variable.increment")
-        var el = document.getElementById(element.dataset.variableright)
+    $("#modal-content").on("click", ".btn.yaxis.increment",function(e){
+        console.log("yaxis.increment")
+        var el = document.getElementById(element.dataset.yaxisright)
         if(el){
             element = el
             populateModal()
         }
     })
-    $("#modal-content").on("click", ".btn.season.decrement",function(e){
-        console.log("season.decrement")
-        var el = document.getElementById(element.dataset.seasonleft)
+    $("#modal-content").on("click", ".btn.triangle.decrement",function(e){
+        console.log("triangle.decrement")
+        var el = document.getElementById(element.dataset.triangleleft)
         if(el){
             element = el
             populateModal()
         }
     })
-    $("#modal-content").on("click", ".btn.season.increment",function(e){
-        console.log("season.increment")
-        var el = document.getElementById(element.dataset.seasonright)
+    $("#modal-content").on("click", ".btn.triangle.increment",function(e){
+        console.log("triangle.increment")
+        var el = document.getElementById(element.dataset.triangleright)
         if(el){
             element = el
             populateModal()
@@ -95,47 +95,47 @@ function getContent(el){
     var prev_disabled;
     var next_disabled;
 
-    prev_disabled = el.dataset["modelleft"] ? "" : "disabled"
-    next_disabled = el.dataset["modelright"] ? "" : "disabled"
+    prev_disabled = el.dataset["xaxisleft"] ? "" : "disabled"
+    next_disabled = el.dataset["xaxisright"] ? "" : "disabled"
     new_elements.push(
         $("".concat(
-            "<div id=current-model>",
-                "<button type='button' class='btn btn-outline-info btn-sm model decrement' style='line-height: 5px'", prev_disabled,"> &lsaquo; </button>",
-                "<button type='button' class='btn btn-outline-info btn-sm model increment' style='line-height: 5px'", next_disabled,"> &rsaquo; </button>",
-                "<span class='field-label' style='margin-left: 4px;'>Model: </span>",
+            "<div id=current-xaxis>",
+                "<button type='button' class='btn btn-outline-info btn-sm xaxis decrement' style='line-height: 5px'", prev_disabled,"> &lsaquo; </button>",
+                "<button type='button' class='btn btn-outline-info btn-sm xaxis increment' style='line-height: 5px'", next_disabled,"> &rsaquo; </button>",
+                "<span class='field-label' style='margin-left: 4px;'>", el.dataset["xaxisname"], ": </span>",
                 "<span class='field-value'>",
-                el.dataset["model"],
+                el.dataset["xaxis"],
                 " </span>",
             "</div>"
         ))
     )
 
-    prev_disabled = el.dataset["variableleft"] ? "" : "disabled"
-    next_disabled = el.dataset["variableright"] ? "" : "disabled"
+    prev_disabled = el.dataset["yaxisleft"] ? "" : "disabled"
+    next_disabled = el.dataset["yaxisright"] ? "" : "disabled"
     new_elements.push(
         $("".concat(
-            "<div id=current-variable>",
-                "<button type='button' class='btn btn-outline-info btn-sm variable decrement' style='line-height: 5px'", prev_disabled,"> &lsaquo; </button>",
-                "<button type='button' class='btn btn-outline-info btn-sm variable increment' style='line-height: 5px'", next_disabled,"> &rsaquo; </button>",
-                "<span class='field-label' style='margin-left: 4px;'>Variable: </span>",
+            "<div id=current-yaxis>",
+                "<button type='button' class='btn btn-outline-info btn-sm yaxis decrement' style='line-height: 5px'", prev_disabled,"> &lsaquo; </button>",
+                "<button type='button' class='btn btn-outline-info btn-sm yaxis increment' style='line-height: 5px'", next_disabled,"> &rsaquo; </button>",
+                "<span class='field-label' style='margin-left: 4px;'>", el.dataset["yaxisname"], ": </span>",
                 "<span class='field-value'>",
-                el.dataset["variable"],
+                el.dataset["yaxis"],
                 " </span>",
             "</div>"
         ))
     )
 
-    if(element.dataset["Season"]){
-        prev_disabled = el.dataset["seasonleft"] ? "" : "disabled"
-        next_disabled = el.dataset["seasonright"] ? "" : "disabled"
+    if(element.dataset["Triangle"]){
+        prev_disabled = el.dataset["triangleleft"] ? "" : "disabled"
+        next_disabled = el.dataset["triangleright"] ? "" : "disabled"
         new_elements.push(
             $("".concat(
-                "<div id=current-season>",
-                    "<button type='button' class='btn btn-outline-info btn-sm season decrement' style='line-height: 5px'", next_disabled,"> &lsaquo; </button>",
-                    "<button type='button' class='btn btn-outline-info btn-sm season increment' style='line-height: 5px'", next_disabled,"> &rsaquo; </button>",
-                    "<span class='field-label' style='margin-left: 4px;'>Season: </span>",
+                "<div id=current-triangle>",
+                    "<button type='button' class='btn btn-outline-info btn-sm triangle decrement' style='line-height: 5px'", next_disabled,"> &lsaquo; </button>",
+                    "<button type='button' class='btn btn-outline-info btn-sm triangle increment' style='line-height: 5px'", next_disabled,"> &rsaquo; </button>",
+                    "<span class='field-label' style='margin-left: 4px;'>", el.dataset["triangelname"], ": </span>",
                     "<span class='field-value'>",
-                    el.dataset["Season"],
+                    el.dataset["Triangle"],
                     " </span>",
                 "</div>"
             ))

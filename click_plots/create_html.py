@@ -8,7 +8,7 @@ import warnings
 click_egg = pkg_resources.resource_filename(pkg_resources.Requirement.parse("click_plots"), "share/click_plots")
 
 def createModalTargets(data, targets_template, x_key, y_key, modal=None, merge=None):
-    # Season is optional. If used, we expect a single string value that indicates the season
+    # Season is optional. If used, we expect a single string value that indicates the triangle
     # Axes have been "decorated" via P.decorate()
     outs = []  # list of target html files
     tips = []  # list of tooltips
@@ -25,28 +25,28 @@ def createModalTargets(data, targets_template, x_key, y_key, modal=None, merge=N
         if merge is not None:
             for merger in merge:
                 if merger[0] in y_keys:  # ok it applies
-                    print("FOUND {} in {}".format(merger[0], y_key))
+                    # print("FOUND {} in {}".format(merger[0], y_key))
                     values = y_value.split("_")
                     for value, key in zip(values, merger):
-                        print("Setting {} to {}".format(key, value.strip()))
+                        # print("Setting {} to {}".format(key, value.strip()))
                         setattr(targets_template, key, value.strip())
         else:
             setattr(targets_template, y_key, y_value.strip())
         # X axis
         for x_index, x_value in enumerate(xaxis_list):
-            print("Dealing with:", x_index, x_value, targets_template.template)
+            # print("Dealing with:", x_index, x_value, targets_template.template)
             if merge is not None:
                 for merger in merge:
                     if merger[0] in x_keys:  # ok it applies
-                        print("FOUND {} in {}".format(merger[0], y_key))
+                        # print("FOUND {} in {}".format(merger[0], y_key))
                         values = x_value.split("_")
                         for value, key in zip(values, merger):
-                            print("SEtting {} to -{}-".format(key, value.strip()))
+                            # print("SEtting {} to -{}-".format(key, value.strip()))
                             setattr(targets_template, key, value.strip())
             else:
                 setattr(targets_template, x_key, x_value.strip())
             fnm = targets_template()
-            print("\t:filename:",fnm)
+            # print("\t:filename:", fnm)
             # Here we test if
             outs.append(fnm)
             image = outs[-1].replace("html", "png")
@@ -68,10 +68,15 @@ def createModalTargets(data, targets_template, x_key, y_key, modal=None, merge=N
                         (x_key, x_value, y_key, y_value, value, image))
             html_id = "{}-{}".format(x_value, y_value)
             extras.append("id='{}' data-value='{}' data-image='{}' "
-                          "data-model='{}' data-modelLeft='{}' data-modelRight='{}' "
-                          "data-variable='{}' data-variableLeft='{}' data-variableRight='{}' "
-                          "data-season='{}' "  # data-seasonLeft='{}' data-seasonRight='{}'"
-                          .format(html_id, value, image, x_value, x_left, x_right, y_value, y_left, y_right, ""))
+                          "data-xaxisName='{}' data-yaxisName='{}' data-triangleName='{}' "
+                          "data-xaxis='{}' data-xaxisLeft='{}' data-xaxisRight='{}' "
+                          "data-yaxis='{}' data-yaxisLeft='{}' data-yaxisRight='{}' "
+                          "data-triangle='{}' data-triangleLeft='{}' data-triangleRight='{}'"
+                          .format(html_id, value, image,
+                                  x_key, y_key, "Triangle",
+                                  x_value, x_left, x_right,
+                                  y_value, y_left, y_right,
+                                  "", "", ""))
             indx += 1
     return outs, tips, extras
 
