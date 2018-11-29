@@ -134,8 +134,10 @@ def scrap(data, axis=0):
 
 data = J(**dic)(squeeze=1)
 print("SHAPE INIT:", data.shape)
-data = scrap(data, axis=1)
-data = scrap(data, axis=0)
+for i in range(len(data.shape)):
+    print("Scrapping dimension:",i)
+    data = scrap(data, axis=i)
+print("SCRAPPED:",data.shape)
 if args.normalize is not False:
     if args.normalize == "median":
         median = genutil.statistics.median(data, axis=1)[0]
