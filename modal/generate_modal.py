@@ -13,6 +13,8 @@ import json
 import ast
 import argparse
 import MV2
+import EzTemplate
+
 pre_parser = argparse.ArgumentParser()
 pre_parser.add_argument("--data_path", help="input data path", default="data/modes")
 pre_parser.add_argument("--files_glob_pattern", help="glob pattern to select correct files in input directory",
@@ -37,6 +39,11 @@ parser.add_argument("--flip", action="store_true", default=False)
 parser.add_argument("--names-update", help="a dictionary to update axes labels", default={})
 parser.add_argument("--modal", help="use a custom modal file", default=None)
 parser.add_argument("--merge", help="merge json dimensions together", default=None)
+parser.add_argument("--split", type=int,
+help="number of columns after which we split the portrait plot into two rows", default=20)
+parser.add_argument("--png_template", help="template for portrait plot png file", default="clickable_portrait.png")
+parser.add_argument("--html_template", hrlp="template for html output filename", default="clickable_portrait.html")
+
 
 # first make sure we do not use --help yet
 yanked_help = False
@@ -77,6 +84,9 @@ if yanked_help:
     sys.argv.insert(1,"--help")
 args = parser.get_parameter(argparse_vals_only=False)
 targets_template = genutil.StringConstructor(args.targets_template)
+png_template = genutil.StringConstructor(args.png_template)
+html_template = genutil.StringConstructor(args.html_template)
+
 
 J = pcmdi_metrics.io.base.JSONs(json_files)
 
@@ -89,9 +99,12 @@ for k in json_keys:
         dic[k[2:]] = att
         if not isinstance(att, (list, tuple)):
             setattr(targets_template, k[2:], att)
+            setattr(png_template, k[2:], att)
+            setattr(html_template, k[2:], att)
 if args.merge is not None:
     dic["merge"] = args.merge
 data = J(**dic)(squeeze=1)
+
 
 if args.normalize is not False:
     if args.normalize == "median":
@@ -113,52 +126,66 @@ if args.flip:
 # Add extra sapaces at the end
 full_dic = {'pr': 'Precipitation'}
 full_dic.update(args.names_update)
-x_key = data.getAxis(-1).id
-y_key = data.getAxis(-2).id
-yax = [full_dic.get(s,s)+"  " for s in data.getAxis(-2)]
-xax = [full_dic.get(s, s)+"   " for s in data.getAxis(-1)]
 
-# Preprocessing step to "decorate" the axes on our target variable
-x = vcs.init(bg=True, geometry=(1200, 800))
-P = pcmdi_metrics.graphics.portraits.Portrait()
-click_plots.setup_portrait(P)
-P.decorate(data, yax, xax)
+png = os.path.join(args.results_dir, png_template(())   
 
-mesh, template, meshfill = P.plot(data, x=x)
+def portrait(data, full_dic, png_file="portrait.png", canvas=None, template=None):
+    x_key = data.getAxis(-1).id
+    y_key = data.getAxis(-2).id
+    yax = [full_dic.get(s,s)+"  " for s in data.getAxis(-2)]
+    xax = [full_dic.get(s, s)+"   " for s in data.getAxis(-1)]
+    # Preprocessing step to "decorate" the axes on our target variable
+    if canvas is None:
+        x = vcs.init(bg=True, geometry=(1200, 800))
+    else:
+        x = canvas
+    P = pcmdi_metrics.graphics.portraits.Portrait()
+    click_plots.setup_portrait(P)
+    P.decorate(data, yax, xax)
 
-png_file = "modal.png"
-x.png(os.path.join(args.results_dir, png_file))
-targets, tips, extras = click_plots.createModalTargets(data, targets_template, x_key, y_key)
+    mesh, template, meshfill = P.plot(data, x=x, template=template)
 
+    x.png(png_file)
+    targets, tips, extras = click_plots.createModalTargets(data, targets_template, x_key, y_key, merge=args.merge)
+
+    # Creates clickable polygons numpy arrays
+    click_areas = vcs.utils.meshToPngCoords(mesh, template, [
+        meshfill.datawc_x1, meshfill.datawc_x2, meshfill.datawc_y1, meshfill.datawc_y2], png=png_file)
+    click_labels_x = vcs.utils.axisToPngCoords([], meshfill, template, 'x1', [
+        meshfill.datawc_x1, meshfill.datawc_x2, meshfill.datawc_y1, meshfill.datawc_y2], png=png_file)
+    click_labels_y = vcs.utils.axisToPngCoords([], meshfill, template, 'y1', [
+        meshfill.datawc_x1, meshfill.datawc_x2, meshfill.datawc_y1, meshfill.datawc_y2], png=png_file)
+
+    targets_lbls_x = extras_lbls_x = tips_lbls_x = [
+        meshfill.xticlabels1[k] for k in sorted(meshfill.xticlabels1.keys())]
+    targets_lbls_y = extras_lbls_y = tips_lbls_y = [
+        meshfill.xticlabels1[k] for k in sorted(meshfill.xticlabels1.keys())]
+
+    clicks = numpy.concatenate((click_areas, click_labels_x, click_labels_y))
+    targets = numpy.concatenate((targets, targets_lbls_x, targets_lbls_y))
+    tips = numpy.concatenate((tips, tips_lbls_x, tips_lbls_y))
+    extras = numpy.concatenate((extras, extras_lbls_x, extras_lbls_y))
+
+    geo = x.geometry()
+    # create the html map element
+    print("WE are now in:",os.getcwd())
+    map_element = vcs.utils.mapPng(
+        png_file, clicks, targets, tips, extras=extras, width=geo["width"], height=geo["height"])
+    return map_element, x
+
+nX = len(xax)
 pth = os.getcwd()
 os.chdir(args.results_dir)
-# Creates clickable polygons numpy arrays
-click_areas = vcs.utils.meshToPngCoords(mesh, template, [
-    meshfill.datawc_x1, meshfill.datawc_x2, meshfill.datawc_y1, meshfill.datawc_y2], png=png_file)
-click_labels_x = vcs.utils.axisToPngCoords([], meshfill, template, 'x1', [
-    meshfill.datawc_x1, meshfill.datawc_x2, meshfill.datawc_y1, meshfill.datawc_y2], png=png_file)
-click_labels_y = vcs.utils.axisToPngCoords([], meshfill, template, 'y1', [
-    meshfill.datawc_x1, meshfill.datawc_x2, meshfill.datawc_y1, meshfill.datawc_y2], png=png_file)
+if nX < args.split:
+    map_elements, canvas = portrait(data, full_dic, png=png())
+else:
+    M = EzTemplate.Multi(rows=2, columns=1)
+    map_elements1, canvas = portrait(data[...,:nX//2], full_dic, canvas=None, png=None, template=M.get())
+    map_elements2, canvas = portrait(data[...,nX//2:], full_dic, canvas=canvas, png=png(), template=M.get())
 
-targets_lbls_x = extras_lbls_x = tips_lbls_x = [
-    meshfill.xticlabels1[k] for k in sorted(meshfill.xticlabels1.keys())]
-targets_lbls_y = extras_lbls_y = tips_lbls_y = [
-    meshfill.xticlabels1[k] for k in sorted(meshfill.xticlabels1.keys())]
-
-clicks = numpy.concatenate((click_areas, click_labels_x, click_labels_y))
-targets = numpy.concatenate((targets, targets_lbls_x, targets_lbls_y))
-tips = numpy.concatenate((tips, tips_lbls_x, tips_lbls_y))
-extras = numpy.concatenate((extras, extras_lbls_x, extras_lbls_y))
-
-geo = x.geometry()
-# create the html map element
-print("WE are now in:",os.getcwd())
-map_element = vcs.utils.mapPng(
-    png_file, clicks, targets, tips, extras=extras, width=geo["width"], height=geo["height"])
 os.chdir(pth)
-fnm = os.path.join(pathout, "clickable_6.html")
-
+html_filename = os.path.join(args.results_dir, html_template(())   
 share_pth = "js"
-click_plots.write_modal_html(fnm, map_element,share_pth, args.results_dir, modal=args.modal)
+click_plots.write_modal_html(html_filename, map_element,share_pth, args.results_dir, modal=args.modal)
 
 print("Geenrated html at:", fnm)

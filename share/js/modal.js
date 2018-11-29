@@ -29,7 +29,6 @@ $( document ).ready(function() {
         element = e.target
         jQuery('#tooltip-modal').modal()
     })
-   console.log("ELELERLRDTDFSXCFGDSCXVFGDSDFGDSCXFGDSFGFDSFGSDCF") 
     $("#modal-content").on("click", ".btn.model.decrement",function(e){
         console.log("model.decrement")
         var el = document.getElementById(element.dataset.modelleft)

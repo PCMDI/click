@@ -7,7 +7,7 @@ import warnings
 
 click_egg = pkg_resources.resource_filename(pkg_resources.Requirement.parse("click_plots"), "share/click_plots")
 
-def createModalTargets(data, targets_template, x_key, y_key, modal=None):
+def createModalTargets(data, targets_template, x_key, y_key, modal=None, merge=None):
     # Season is optional. If used, we expect a single string value that indicates the season
     # Axes have been "decorated" via P.decorate()
     outs = []  # list of target html files
@@ -19,12 +19,32 @@ def createModalTargets(data, targets_template, x_key, y_key, modal=None):
 
     yaxis_list = data.getAxis(0).id.split("___")
     xaxis_list = data.getAxis(-1).id.split("___")
+    x_keys = x_key.split("_")
+    y_keys = y_key.split("_")
     for y_index, y_value in enumerate(yaxis_list):
-        setattr(targets_template, y_key, y_value.strip())
+        if merge is not None:
+            for merger in merge:
+                if merger[0] in y_keys:  # ok it applies
+                    print("FOUND {} in {}".format(merger[0], y_key))
+                    values = y_value.split("_")
+                    for value, key in zip(values, merger):
+                        print("Setting {} to {}".format(key, value.strip()))
+                        setattr(targets_template, key, value.strip())
+        else:
+            setattr(targets_template, y_key, y_value.strip())
         # X axis
         for x_index, x_value in enumerate(xaxis_list):
             print("Dealing with:", x_index, x_value, targets_template.template)
-            setattr(targets_template, x_key, x_value.strip())
+            if merge is not None:
+                for merger in merge:
+                    if merger[0] in x_keys:  # ok it applies
+                        print("FOUND {} in {}".format(merger[0], y_key))
+                        values = x_value.split("_")
+                        for value, key in zip(values, merger):
+                            print("SEtting {} to -{}-".format(key, value.strip()))
+                            setattr(targets_template, key, value.strip())
+            else:
+                setattr(targets_template, x_key, x_value.strip())
             fnm = targets_template()
             print("\t:filename:",fnm)
             # Here we test if
