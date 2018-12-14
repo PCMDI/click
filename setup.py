@@ -45,6 +45,8 @@ scripts = ['modal/generate_modal.py']
 
 data_files = [
               ('share/click_plots/js', ['share/js/modal.js'] ),
+              ('share/click_plots', ['share/template_top.json',
+              'share/template_bottom.json'] ),
               ]
 
 setup(name='click_plots',

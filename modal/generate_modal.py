@@ -13,8 +13,9 @@ import ast
 import argparse
 import cdms2
 import MV2
-import EzTemplate
 
+
+click_egg_path = click_plots.click_egg_path
 pre_parser = argparse.ArgumentParser()
 pre_parser.add_argument("--data_path", help="input data path", default="data/modes")
 pre_parser.add_argument("--files_glob_pattern", help="glob pattern to select correct files in input directory",
@@ -137,7 +138,7 @@ print("SHAPE INIT:", data.shape)
 for i in range(len(data.shape)):
     print("Scrapping dimension:",i)
     data = scrap(data, axis=i)
-print("SCRAPPED:",data.shape)
+print("SCRAPPED:", data.shape)
 if args.normalize is not False:
     if args.normalize == "median":
         median = genutil.statistics.median(data, axis=1)[0]
@@ -169,11 +170,16 @@ if nX < args.split:
     clicks, targets, tips, extras, canvas = click_plots.portrait(
         data, full_dic, targets_template, merge=args.merge, png_file=png)
 else:
-    M = EzTemplate.Multi(rows=2, columns=1)
+    vcs.scriptrun(os.path.join(click_egg_path,"template_bottom.json"))
+    vcs.scriptrun(os.path.join(click_egg_path,"template_top.json"))
+    input("PRESSENTER")
+    print(vcs.listelements("template"))
     clicks1, targets1, tips1, extras1, canvas = click_plots.portrait(
-        data[..., :nX//2], full_dic, targets_template, merge=args.merge, canvas=None, png_file=png, template=M.get())
+        data[..., :nX//2], full_dic, targets_template, merge=args.merge, canvas=None,
+       png_file=png, template='click_portraits_top')
     clicks2, targets2, tips2, extras2, canvas = click_plots.portrait(
-        data[..., nX//2:], full_dic, targets_template, merge=args.merge, canvas=canvas, png_file=png, template=M.get())
+        data[..., nX//2:], full_dic, targets_template, merge=args.merge, canvas=canvas,
+        png_file=png, template='click_portraits_bottom')
     clicks = numpy.concatenate((clicks1, clicks2))
     targets = numpy.concatenate((targets1, targets2))
     tips = numpy.concatenate((tips1, tips2))
