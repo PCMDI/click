@@ -101,7 +101,7 @@ def setup_portrait(P):
     # colors to use
     #SET.fillareacolors = vcs.getcolors(SET.levels)
 
-def portrait(data, full_dic, targets_template, merge=None, png_file="portrait.png", canvas=None, template=None):
+def portrait(data, full_dic, targets_template, merge=None, png_file="portrait.png", canvas=None, template=None, nodata_png=None, missing_png=None):
     x_key = data.getAxis(-1).id
     y_key = data.getAxis(-2).id
     yax = [full_dic.get(s,s)+"  " for s in data.getAxis(-2)]
@@ -119,7 +119,8 @@ def portrait(data, full_dic, targets_template, merge=None, png_file="portrait.pn
 
     x.png(png_file)
 
-    targets, tips, extras = click_plots.createModalTargets(data, targets_template, x_key, y_key, merge=merge)
+    targets, tips, extras = click_plots.createModalTargets(data, targets_template, x_key, y_key, full_dic, merge=merge,
+    nodata_png=nodata_png, missing_png=missing_png)
 
     # Creates clickable polygons numpy arrays
     click_areas = vcs.utils.meshToPngCoords(mesh, template, [

@@ -39,6 +39,8 @@ parser.add_argument("--split", type=int,
                     default=20)
 parser.add_argument("--png_template", help="template for portrait plot png file", default="clickable_portrait.png")
 parser.add_argument("--html_template", help="template for html output filename", default="clickable_portrait.html")
+parser.add_argument("--no_target", help="png file to use when target png is missing")
+parser.add_argument("--no_data", help="png file to use when no data is available")
 
 
 # first make sure we do not use --help yet
@@ -84,8 +86,6 @@ print("We are looking at {:d} Json Files:".format(len(json_files)))
 
 # Load json and figure out keys to add
 J = pcmdi_metrics.io.base.JSONs(json_files)
-print("J:",J.getAxisList())
-print(J.getAxis("statistic")[:])
 json_keys = set()
 for k in J.getAxisIds():
     json_keys.add("--{}".format(k))
@@ -102,7 +102,6 @@ args = parser.get_parameter(argparse_vals_only=False)
 targets_template = genutil.StringConstructor(args.targets_template)
 png_template = genutil.StringConstructor(args.png_template)
 html_template = genutil.StringConstructor(args.html_template)
-
 
 
 pathout = args.results_dir
@@ -129,7 +128,6 @@ def scrap(data, axis=0):
     axes = new.getAxisList()  # Save for later
     new = MV2.array(new.asma())  # lose dims
     for i in range(new.shape[0] - 1, -1, -1):
-        print("I:",i)
         tmp = new[i]
         if tmp.mask.all():
             a = new[:i]
@@ -148,12 +146,8 @@ def scrap(data, axis=0):
 
 
 data = J(**dic)(squeeze=1)
-print("SHAPE INIT:", data.shape, dic)
 for i in range(len(data.shape)):
-    print("Scrapping dimension:",i)
     data = scrap(data, axis=i)
-    print("data shape:", data.shape)
-print("SCRAPPED:", data.shape)
 if args.normalize is not False:
     if args.normalize == "median":
         median = genutil.statistics.median(data, axis=1)[0]
@@ -165,10 +159,8 @@ if args.normalize is not False:
     else:
         for k in args.normalize:
             dic[k] = args.normalize[k]
-        print("NEW DIC:",dic)
         norm = J(**dic)(squeeze=1)
         data /= norm
-print("MN MX:",data.max(), data.min())
 
 if args.flip:
     data = MV2.transpose(data)
@@ -182,20 +174,23 @@ png = png_template()
 
 pth = os.getcwd()
 os.chdir(args.results_dir)
-print("WE are now in:",os.getcwd())
 nX = len(data.getAxis(-1))
 if nX < args.split:
     clicks, targets, tips, extras, canvas = click_plots.portrait(
-        data, full_dic, targets_template, merge=args.merge, png_file=png)
+        data, full_dic, targets_template, merge=args.merge, png_file=png,
+        nodata_png=args.no_data,
+        missing_png=args.no_target)
 else:
     vcs.scriptrun(os.path.join(click_egg_path,"template_bottom.json"))
     vcs.scriptrun(os.path.join(click_egg_path,"template_top.json"))
     clicks1, targets1, tips1, extras1, canvas = click_plots.portrait(
         data[..., :nX//2], full_dic, targets_template, merge=args.merge, canvas=None,
-       png_file=png, template='click_portraits_top')
+       png_file=png, template='click_portraits_top', nodata_png=args.no_data,
+       missing_png=args.no_target)
     clicks2, targets2, tips2, extras2, canvas = click_plots.portrait(
         data[..., nX//2:], full_dic, targets_template, merge=args.merge, canvas=canvas,
-        png_file=png, template='click_portraits_bottom')
+        png_file=png, template='click_portraits_bottom', nodata_png=args.no_data,
+       missing_png=args.no_target)
     clicks = numpy.concatenate((clicks1, clicks2))
     targets = numpy.concatenate((targets1, targets2))
     tips = numpy.concatenate((tips1, tips2))
@@ -210,4 +205,4 @@ html_filename = os.path.join(args.results_dir, html_template())
 share_pth = "js"
 click_plots.write_modal_html(html_filename, map_element,share_pth, args.results_dir, modal=args.modal)
 
-print("Geenrated html at:", html_filename)
+print("Generated html at:", html_filename)
