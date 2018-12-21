@@ -10,23 +10,17 @@ import vcs
 import click_plots
 import json
 import ast
-import argparse
 import cdms2
 import MV2
 
 
 click_egg_path = click_plots.click_egg_path
-pre_parser = argparse.ArgumentParser()
-pre_parser.add_argument("--data_path", help="input data path", default="data/modes")
-pre_parser.add_argument("--files_glob_pattern", help="glob pattern to select correct files in input directory",
-                    default="*.json")
 
 parser = pcmdi_metrics.pcmdi.pmp_parser.PMPParser()
 parser.use("--results_dir")
 
-parser.add_argument("--data_path", help="input data path", default="data/modes")
-parser.add_argument("--files_glob_pattern", help="glob pattern to select correct files in input directory",
-                    default="*.json")
+parser.add_argument("--data_path", help="input data path")
+parser.add_argument("--files_glob_pattern", help="glob pattern to select correct files in input directory")
 parser.add_argument("--json-preprocessor", help="if sending json files use this script to preprocess",
                     default=None)
 parser.add_argument("--title", help="title for plot")
@@ -57,25 +51,43 @@ if "-h" in sys.argv:
     yanked_help = True
 args, unknown = parser.parse_known_args()
 
-injpath = args.data_path
+
 
 #######################################################
 
-print("looking in:", injpath, args.files_glob_pattern)
+## make sure we have default
+data_path = "data/mode"
+files_glob_pattern = "*.json"
+
+if args.parameters is not None:  # User sent param file need to look for datapth and pattern
+    with open(args.parameters) as f:
+        code = compile(f.read(), args.parameters, 'exec')
+        global_vars = {}
+        local_vars = {}
+        exec(code, global_vars, local_vars)
+        if "data_path" in local_vars:
+            data_path = local_vars["data_path"]
+        if "files_glob_pattern" in local_vars:
+            files_glob_pattern = local_vars["files_glob_pattern"]
+# If passed from command line, overwrite this
+if args.data_path is not None:
+    data_path = args.data_path
+if args.files_glob_pattern is not None:
+    files_glob_pattern = args.files_glob_pattern
 json_files = glob.glob(
     os.path.join(
-        injpath,
-        args.files_glob_pattern))
+        data_path,
+        files_glob_pattern))
 
+print("LOOKING AT PATTERN:", files_glob_pattern, "in", data_path)
 print("We are looking at {:d} Json Files:".format(len(json_files)))
 
+# Load json and figure out keys to add
+J = pcmdi_metrics.io.base.JSONs(json_files)
 json_keys = set()
-for j in json_files:
-    with open(j) as f:
-        inp = json.load(f)
-        if "json_structure" in inp:
-            for k in inp["json_structure"]:
-                json_keys.add("--{}".format(k))
+for k in J.getAxisIds():
+    json_keys.add("--{}".format(k))
+
 
 # Ok now add all these keys to parameter
 for k in json_keys:
@@ -90,7 +102,6 @@ png_template = genutil.StringConstructor(args.png_template)
 html_template = genutil.StringConstructor(args.html_template)
 
 
-J = pcmdi_metrics.io.base.JSONs(json_files)
 
 pathout = args.results_dir
 
@@ -113,13 +124,19 @@ def scrap(data, axis=0):
     else:
         order = "{}...".format(axis)
     new = data(order=order)
+    print("NEW SHAPE:",new.shape)
     axes = new.getAxisList()  # Save for later
     new = MV2.array(new.asma())  # lose dims
     for i in range(new.shape[0] - 1, -1, -1):
-        tmp = data[i]
+        print("I:",i)
+        tmp = new[i]
+        print("TMP SHAPE:",tmp.shape, i)
         if tmp.mask.all():
+            print("\tOOOPS BAD ONE")
             a = new[:i]
+            print("\t\t",a.shape)
             b = new[i+1:]
+            print("\t\t",b.shape)
             if b.shape[0] == 0:
                 new = a
             else:
@@ -137,7 +154,8 @@ data = J(**dic)(squeeze=1)
 print("SHAPE INIT:", data.shape)
 for i in range(len(data.shape)):
     print("Scrapping dimension:",i)
-    data = scrap(data, axis=i)
+    # data = scrap(data, axis=i)
+    print("data shape:", data.shape)
 print("SCRAPPED:", data.shape)
 if args.normalize is not False:
     if args.normalize == "median":
@@ -172,8 +190,6 @@ if nX < args.split:
 else:
     vcs.scriptrun(os.path.join(click_egg_path,"template_bottom.json"))
     vcs.scriptrun(os.path.join(click_egg_path,"template_top.json"))
-    input("PRESSENTER")
-    print(vcs.listelements("template"))
     clicks1, targets1, tips1, extras1, canvas = click_plots.portrait(
         data[..., :nX//2], full_dic, targets_template, merge=args.merge, canvas=None,
        png_file=png, template='click_portraits_top')
