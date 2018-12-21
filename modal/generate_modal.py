@@ -84,6 +84,8 @@ print("We are looking at {:d} Json Files:".format(len(json_files)))
 
 # Load json and figure out keys to add
 J = pcmdi_metrics.io.base.JSONs(json_files)
+print("J:",J.getAxisList())
+print(J.getAxis("statistic")[:])
 json_keys = set()
 for k in J.getAxisIds():
     json_keys.add("--{}".format(k))
@@ -124,19 +126,14 @@ def scrap(data, axis=0):
     else:
         order = "{}...".format(axis)
     new = data(order=order)
-    print("NEW SHAPE:",new.shape)
     axes = new.getAxisList()  # Save for later
     new = MV2.array(new.asma())  # lose dims
     for i in range(new.shape[0] - 1, -1, -1):
         print("I:",i)
         tmp = new[i]
-        print("TMP SHAPE:",tmp.shape, i)
         if tmp.mask.all():
-            print("\tOOOPS BAD ONE")
             a = new[:i]
-            print("\t\t",a.shape)
             b = new[i+1:]
-            print("\t\t",b.shape)
             if b.shape[0] == 0:
                 new = a
             else:
@@ -151,10 +148,10 @@ def scrap(data, axis=0):
 
 
 data = J(**dic)(squeeze=1)
-print("SHAPE INIT:", data.shape)
+print("SHAPE INIT:", data.shape, dic)
 for i in range(len(data.shape)):
     print("Scrapping dimension:",i)
-    # data = scrap(data, axis=i)
+    data = scrap(data, axis=i)
     print("data shape:", data.shape)
 print("SCRAPPED:", data.shape)
 if args.normalize is not False:
@@ -166,9 +163,12 @@ if args.normalize is not False:
         # normalize
         data = (data-median) / median
     else:
-        dic["statistic"] = args.normalize
-        norm = J(**dic)
+        for k in args.normalize:
+            dic[k] = args.normalize[k]
+        print("NEW DIC:",dic)
+        norm = J(**dic)(squeeze=1)
         data /= norm
+print("MN MX:",data.max(), data.min())
 
 if args.flip:
     data = MV2.transpose(data)
