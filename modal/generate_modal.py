@@ -186,24 +186,24 @@ if not os.path.exists(args.results_dir):
 os.chdir(args.results_dir)
 
 
-def onePortraitPlotPass(data, full_dic, targets_template, args, png_file, canvas, multiple=1.1):
+def onePortraitPlotPass(data, full_dic, targets_template, args, png_file, canvas, multiple=1.1, sector=None):
     nX = len(data.getAxis(-1))
     if nX < args.split:
         clicks, targets, tips, extras, canvas = click_plots.portrait(
             data, full_dic, targets_template, merge=args.merge,canvas=canvas, png_file=png_file,
             nodata_png=args.no_data,
-            missing_png=args.no_target, multiple=multiple)
+            missing_png=args.no_target, multiple=multiple, sector=sector)
     else:
         vcs.scriptrun(os.path.join(click_egg_path, "template_bottom.json"))
         vcs.scriptrun(os.path.join(click_egg_path, "template_top.json"))
         clicks1, targets1, tips1, extras1, canvas = click_plots.portrait(
             data[..., :nX//2], full_dic, targets_template, merge=args.merge, canvas=canvas,
             png_file=png, template='click_portraits_top', nodata_png=args.no_data,
-            missing_png=args.no_target, multiple=multiple)
+            missing_png=args.no_target, multiple=multiple, sector=sector)
         clicks2, targets2, tips2, extras2, canvas = click_plots.portrait(
             data[..., nX//2:], full_dic, targets_template, merge=args.merge, canvas=canvas,
             png_file=png, template='click_portraits_bottom', nodata_png=args.no_data,
-            missing_png=args.no_target, multiple=multiple)
+            missing_png=args.no_target, multiple=multiple, sector=sector)
         clicks = numpy.concatenate((clicks1, clicks2))
         targets = numpy.concatenate((targets1, targets2))
         tips = numpy.concatenate((tips1, tips2))
@@ -211,31 +211,30 @@ def onePortraitPlotPass(data, full_dic, targets_template, args, png_file, canvas
     return clicks, targets, tips, extras, canvas
 
 
+canvas = None
 if args.sector is not None:
-    data.info()
     data = data(order="({})...".format(args.sector))
-    data.info()
     sectors = data.getAxis(0)
     nSectors = len(sectors) / 10.
-    canvas = None
     clicks = None
     for i, sec in enumerate(sectors):
-        print("PROCESSING SECTOR:",sec,i)
-        data2 = data[i]
         setattr(targets_template, args.sector, sec)
         setattr(png_template, args.sector, sec)
         png = png_template()
-        print("MULTIPLE:", i+1+nSectors)
         sec_clicks, sec_targets, sec_tips, sec_extras, canvas = onePortraitPlotPass(
-            data2, full_dic, targets_template, args, png, canvas, multiple=i + 1 + nSectors)
+            data[i], full_dic, targets_template, args, png, canvas, multiple=i + 1 + nSectors, sector=data.getAxis(0))
         if clicks is None:
             clicks, targets, tips, extras = sec_clicks, sec_targets, sec_tips, sec_extras
         else:
-            print("SHAPES:",clicks.shape, sec_clicks.shape)
             clicks = numpy.concatenate((clicks, sec_clicks))
             targets = numpy.concatenate((targets, sec_targets))
             tips = numpy.concatenate((tips, sec_tips))
             extras = numpy.concatenate((extras, sec_extras))
+else:
+    png = png_template()
+    clicks, targets, tips, extras, canvas = onePortraitPlotPass(
+        data, full_dic, targets_template, args, png, canvas)
+
 
 # create the html map element
 geo = canvas.geometry()

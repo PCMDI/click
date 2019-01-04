@@ -114,11 +114,13 @@ def add_extra_vertices(array):
 
 
 def portrait(data, full_dic, targets_template, merge=None, png_file="portrait.png",
-             canvas=None, template=None, nodata_png=None, missing_png=None, multiple=1.1):
+             canvas=None, template=None, nodata_png=None, missing_png=None, multiple=1.1,
+             sector=None):
     x_key = data.getAxis(-1).id
     y_key = data.getAxis(-2).id
     yax = [full_dic.get(s, s)+"  " for s in data.getAxis(-2)]
     xax = [full_dic.get(s, s)+"   " for s in data.getAxis(-1)]
+
     # Preprocessing step to "decorate" the axes on our target variable
     if canvas is None:
         x = vcs.init(bg=True, geometry=(1200, 800))
@@ -134,7 +136,8 @@ def portrait(data, full_dic, targets_template, merge=None, png_file="portrait.pn
     x.png(png_file)
 
     targets, tips, extras = click_plots.createModalTargets(data, targets_template, x_key, y_key, full_dic, merge=merge,
-                                                           nodata_png=nodata_png, missing_png=missing_png)
+                                                           nodata_png=nodata_png, missing_png=missing_png,
+                                                           sector=sector)
 
     # Creates clickable polygons numpy arrays
     click_areas = vcs.utils.meshToPngCoords(mesh, template, [
@@ -149,21 +152,15 @@ def portrait(data, full_dic, targets_template, merge=None, png_file="portrait.pn
     targets_lbls_y = extras_lbls_y = tips_lbls_y = [
         meshfill.xticlabels1[k] for k in sorted(meshfill.xticlabels1.keys())]
 
-    print("OK CONCATENATING:", click_areas.shape,
-          click_labels_x.shape, click_labels_y.shape)
     # when using multiple we have different shapes so we need to "extend"
     if click_areas.shape[-1] > click_labels_x.shape[-1]:
         # ok more vertices in click area
-        print("trust thing")
         click_labels_x = add_extra_vertices(click_labels_x)
         click_labels_y = add_extra_vertices(click_labels_y)
     elif click_areas.shape[-1] < click_labels_x.shape[-1]:
         # ok less vertices in click area
-        print("second thing")
         click_areas = add_extra_vertices(click_areas)
 
-    print("OK CONCATENATING:", click_areas.shape,
-          click_labels_x.shape, click_labels_y.shape)
     clicks = numpy.concatenate((click_areas, click_labels_x, click_labels_y))
     targets = numpy.concatenate((targets, targets_lbls_x, targets_lbls_y))
     tips = numpy.concatenate((tips, tips_lbls_x, tips_lbls_y))

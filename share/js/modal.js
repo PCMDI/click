@@ -61,17 +61,17 @@ $( document ).ready(function() {
             populateModal()
         }
     })
-    $("#modal-content").on("click", ".btn.triangle.decrement",function(e){
-        console.log("triangle.decrement")
-        var el = document.getElementById(element.dataset.triangleleft)
+    $("#modal-content").on("click", ".btn.sector.decrement",function(e){
+        console.log("sector.decrement")
+        var el = document.getElementById(element.dataset.sectorleft)
         if(el){
             element = el
             populateModal()
         }
     })
-    $("#modal-content").on("click", ".btn.triangle.increment",function(e){
-        console.log("triangle.increment")
-        var el = document.getElementById(element.dataset.triangleright)
+    $("#modal-content").on("click", ".btn.sector.increment",function(e){
+        console.log("sector.increment")
+        var el = document.getElementById(element.dataset.sectorright)
         if(el){
             element = el
             populateModal()
@@ -125,17 +125,17 @@ function getContent(el){
         ))
     )
 
-    if(element.dataset["Triangle"]){
-        prev_disabled = el.dataset["triangleleft"] ? "" : "disabled"
-        next_disabled = el.dataset["triangleright"] ? "" : "disabled"
+    if(element.dataset["sector"]){
+        prev_disabled = el.dataset["sectorleft"] ? "" : "disabled"
+        next_disabled = el.dataset["sectorright"] ? "" : "disabled"
         new_elements.push(
             $("".concat(
-                "<div id=current-triangle>",
-                    "<button type='button' class='btn btn-outline-info btn-sm triangle decrement' style='line-height: 5px'", next_disabled,"> &lsaquo; </button>",
-                    "<button type='button' class='btn btn-outline-info btn-sm triangle increment' style='line-height: 5px'", next_disabled,"> &rsaquo; </button>",
-                    "<span class='field-label' style='margin-left: 4px;'>", el.dataset["triangelname"], ": </span>",
+                "<div id=current-sector>",
+                    "<button type='button' class='btn btn-outline-info btn-sm sector decrement' style='line-height: 5px'", next_disabled,"> &lsaquo; </button>",
+                    "<button type='button' class='btn btn-outline-info btn-sm sector increment' style='line-height: 5px'", next_disabled,"> &rsaquo; </button>",
+                    "<span class='field-label' style='margin-left: 4px;'>", el.dataset["sectorname"], ": </span>",
                     "<span class='field-value'>",
-                    el.dataset["Triangle"],
+                    el.dataset["sector"],
                     " </span>",
                 "</div>"
             ))
