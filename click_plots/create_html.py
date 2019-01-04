@@ -43,6 +43,7 @@ def createModalTargets(data, targets_template, x_key, y_key, update_names,
             sec_right = sector[s_index+1]
         sec_left = sector[s_index-1]
     else:
+        s_key = ""
         s_value = ""
         sec_right = ""
         sec_left = ""
