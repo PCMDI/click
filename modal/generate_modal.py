@@ -49,7 +49,9 @@ parser.add_argument(
     "--no_data", help="png file to use when no data is available")
 parser.add_argument(
     "--sector", help="name of extra variable to use as 'sector' (triangles) in portrait plot")
-
+parser.add_argument("--levels", help="levels to use for portrait plots")
+parser.add_argument("--colors", help="colors to use for portrait plots")
+parser.add_argument("--colormap", help="colormap to use for portrait plots")
 
 # first make sure we do not use --help yet
 yanked_help = False
@@ -189,6 +191,10 @@ CP = click_plots.ClickablePortrait(
     x=x, nodata_png=args.no_data, missing_png=args.no_target)
 CP.targets_template = targets_template
 CP.png_template = png_template
+CP.PLOT_SETTINGS.fillareacolors = args.colors
+print("COLORS:" , CP.PLOT_SETTINGS.fillareacolors)
+CP.PLOT_SETTINGS.levels = args.levels
+CP.PLOT_SETTINGS.colormap = args.colormap
 
 
 def onePortraitPlotPass(data, full_dic, CP, merge, multiple=1.1, sector=None):
