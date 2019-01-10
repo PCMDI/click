@@ -41,6 +41,7 @@ parser.add_argument("--split", type=int,
                     default=20)
 parser.add_argument("--png_template", help="template for portrait plot png file",
                     default="clickable_portrait.png")
+parser.add_argument("--png_size",help="png output size", default="800x600")
 parser.add_argument("--html_template", help="template for html output filename",
                     default="clickable_portrait.html")
 parser.add_argument(
@@ -176,8 +177,7 @@ if args.flip:
     data = MV2.transpose(data)
 # prepare axis name for portrait plot
 # Add extra sapaces at the end
-full_dic = {'pr': 'Precipitation'}
-full_dic.update(args.names_update)
+full_dic = args.names_update
 
 
 pth = os.getcwd()
@@ -186,7 +186,8 @@ if not os.path.exists(args.results_dir):
     os.makedirs(args.results_dir)
 os.chdir(args.results_dir)
 
-x = vcs.init(bg=True, geometry=(1200, 800))
+geo = args.png_size.split("x")
+x = vcs.init(bg=True, geometry={"width":int(geo[0]), "height":int(geo[1])})
 CP = click_plots.ClickablePortrait(
     x=x, nodata_png=args.no_data, missing_png=args.no_target)
 CP.targets_template = targets_template
