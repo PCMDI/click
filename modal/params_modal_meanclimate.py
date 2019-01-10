@@ -27,8 +27,8 @@ normalize = "median"
 targets_template = "/work/gleckler1/www/pptest/plots/cmip5/historical/clim/%(variable)/%(variable).%(model)_%(season).png"
 pth = os.getcwd()
 targets_template = os.path.join(pth,"data/plots/peter/%(variable).%(model)_%(season).png")
-# SAMPLE: /work/gleckler1/www/pptest/plots/cmip5/historical/clim/rlut/rlut.IPSL-CM5A-MR_son.png
 #targets_template = "plots/cmip5/historical/%(stat)/%(variable)/%(variable).%(model)_%(season).png"
+# SAMPLE: /work/gleckler1/www/pptest/plots/cmip5/historical/clim/rlut/rlut.IPSL-CM5A-MR_son.png
 
 levels = [-1.e20, -.5, -.4, -.3, -.2, -.1, 0, .1, .2, .3, .4, 1.e20]
 colormap = "viridis"
