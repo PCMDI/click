@@ -9,7 +9,7 @@ results_dir = './modal_html'
 title = 'Seasonal Errors (' + statistic + ')'
 files_glob_pattern = "*regrid2*.json"
 bad = []
-sectors = False
+sectors = True
 if sectors:
     season = ["djf", "jja", "son", "mam"]
     sector = 'season'
