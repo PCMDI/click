@@ -18,41 +18,48 @@ click_egg_path = click_plots.click_egg_path
 parser = pcmdi_metrics.pcmdi.pmp_parser.PMPParser()
 parser.use("--results_dir")
 
-parser.add_argument("--data_path", help="input data path")
-parser.add_argument("--files_glob_pattern",
+
+graph = parser.add_argument_group("graphics", "Graphics Related Controls")
+inpt = parser.add_argument_group("input", "Input Data Related Controls")
+outpt = parser.add_argument_group("output", "Output Related Controls")
+web = parser.add_argument_group("web", "Web pages related arguments (modal)")
+
+
+inpt.add_argument("--data_path", help="input data path")
+inpt.add_argument("--files_glob_pattern",
                     help="glob pattern to select correct files in input directory")
-parser.add_argument("--json-preprocessor", help="if sending json files use this script to preprocess",
+inpt.add_argument("--json-preprocessor", help="if sending json files use this script to preprocess",
                     default=None)
-parser.add_argument("--title", help="title for plot")
-parser.add_argument("--bad", help="list of bad models", default=[])
-parser.add_argument("--normalize",
+graph.add_argument("--title", help="title for plot")
+inpt.add_argument("--bad", help="list of bad models", default=[])
+inpt.add_argument("--normalize",
                     help="normalize results by statistic", default=False)
-parser.add_argument("--targets_template",
+web.add_argument("--targets_template",
                     default="data/plots/Panel6_%(mode)_%(season)_%(model)_%(rip).png",
                     help="template to find targets destination")
-parser.add_argument("--flip", action="store_true", default=False)
-parser.add_argument(
+graph.add_argument("--flip", action="store_true", default=False)
+graph.add_argument(
     "--names-update", help="a dictionary to update axes labels", default={})
-parser.add_argument("--modal", help="use a custom modal file", default=None)
-parser.add_argument(
+web.add_argument("--modal", help="use a custom modal file", default=None)
+inpt.add_argument(
     "--merge", help="merge json dimensions together", default=None)
-parser.add_argument("--split", type=int,
+graph.add_argument("--split", type=int,
                     help="number of columns after which we split the portrait plot into two rows",
                     default=20)
-parser.add_argument("--png_template", help="template for portrait plot png file",
+outpt.add_argument("--png_template", help="template for portrait plot png file",
                     default="clickable_portrait.png")
-parser.add_argument("--png_size",help="png output size", default="800x600")
-parser.add_argument("--html_template", help="template for html output filename",
+outpt.add_argument("--png_size",help="png output size", default="800x600")
+web.add_argument("--html_template", help="template for html output filename",
                     default="clickable_portrait.html")
-parser.add_argument(
+web.add_argument(
     "--no_target", help="png file to use when target png is missing")
-parser.add_argument(
+web.add_argument(
     "--no_data", help="png file to use when no data is available")
-parser.add_argument(
+inpt.add_argument(
     "--sector", help="name of extra variable to use as 'sector' (triangles) in portrait plot")
-parser.add_argument("--levels", help="levels to use for portrait plots")
-parser.add_argument("--colors", help="colors to use for portrait plots")
-parser.add_argument("--colormap", help="colormap to use for portrait plots")
+graph.add_argument("--levels", help="levels to use for portrait plots")
+graph.add_argument("--colors", help="colors to use for portrait plots")
+graph.add_argument("--colormap", help="colormap to use for portrait plots")
 
 # first make sure we do not use --help yet
 yanked_help = False
@@ -103,7 +110,7 @@ for k in J.getAxisIds():
 
 # Ok now add all these keys to parameter
 for k in json_keys:
-    parser.add_argument(k, default=None, type=ast.literal_eval)
+    inpt.add_argument(k, default=None, type=ast.literal_eval)
 
 # do we need to add back help
 if yanked_help:
