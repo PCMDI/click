@@ -146,6 +146,8 @@ if args.normalize is not False:
         median = median.filled()
         # normalize
         data = (data-median) / median
+    elif callable(args.normalize):  # Test if callable
+        data = args.normalize(data, args)
     else:
         for k in args.normalize:
             dic[k] = args.normalize[k]
