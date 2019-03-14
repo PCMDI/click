@@ -59,7 +59,7 @@ inpt.add_argument(
     "--sector", help="name of extra variable to use as 'sector' (triangles) in portrait plot")
 graph.add_argument("--levels", help="levels to use for portrait plots")
 graph.add_argument("--colors", help="colors to use for portrait plots")
-graph.add_argument("--colormap", help="colormap to use for portrait plots")
+graph.add_argument("--colormap", help="colormap to use for portrait plots", default=None)
 
 # first make sure we do not use --help yet
 yanked_help = False
@@ -136,36 +136,8 @@ if args.merge is not None:
     dic["merge"] = args.merge
 
 
-def scrap(data, axis=0):
-    originalOrder = data.getOrder(ids=True)
-    if axis not in ['x', 'y', 'z', 't'] and not isinstance(axis, int):
-        order = "({})...".format(axis)
-    else:
-        order = "{}...".format(axis)
-    new = data(order=order)
-    axes = new.getAxisList()  # Save for later
-    new = MV2.array(new.asma())  # lose dims
-    for i in range(new.shape[0] - 1, -1, -1):
-        tmp = new[i]
-        if tmp.mask.all():
-            a = new[:i]
-            b = new[i+1:]
-            if b.shape[0] == 0:
-                new = a
-            else:
-                new = MV2.concatenate((a, b))
-    newAxis = []
-    for v in new.getAxis(0):
-        newAxis.append(axes[0][int(v)])
-    ax = cdms2.createAxis(newAxis, id=axes[0].id)
-    axes[0] = ax
-    new.setAxisList(axes)
-    return new(order=originalOrder)
-
-
 data = J(**dic)(squeeze=1)
-for i in range(len(data.shape)):
-    data = scrap(data, axis=i)
+
 if args.normalize is not False:
     if args.normalize == "median":
         median = genutil.statistics.median(data, axis=1)[0]
@@ -200,7 +172,6 @@ CP = click_plots.ClickablePortrait(
 CP.targets_template = targets_template
 CP.png_template = png_template
 CP.PLOT_SETTINGS.fillareacolors = args.colors
-print("COLORS:" , CP.PLOT_SETTINGS.fillareacolors)
 CP.PLOT_SETTINGS.levels = args.levels
 CP.PLOT_SETTINGS.colormap = args.colormap
 
@@ -214,6 +185,17 @@ def onePortraitPlotPass(data, full_dic, CP, merge, multiple=1.1, sector=None):
     else:
         vcs.scriptrun(os.path.join(click_egg_path, "template_bottom.json"))
         vcs.scriptrun(os.path.join(click_egg_path, "template_top.json"))
+        if CP.PLOT_SETTINGS.colormap is None:
+            CP.PLOT_SETTINGS.colormap= "bl_rd_12"
+        if CP.PLOT_SETTINGS.levels is None:
+            min, max = vcs.minmax(data)
+            if max != 0:
+                max = max + .000001
+            levs = vcs.mkscale(min, max)
+            CP.PLOT_SETTINGS.levels = levs
+            if CP.PLOT_SETTINGS.fillareacolors is None:
+                CP.PLOT_SETTINGS.fillareacolors = vcs.getcolors(levs, list(range(144, 156)), split=1)
+
         clicks1, targets1, tips1, extras1 = CP.plot(
             data[..., :nX//2], full_dic, merge=merge,
             template='click_portraits_top',

@@ -10,3 +10,5 @@ normalize = 'median'
 #season = ["JJA","SON"]
 #realization = ["r1i1p1","r2i1p1"]
 split = 4
+#colormap = "viridis"
+#png_size = "2000x1200"
