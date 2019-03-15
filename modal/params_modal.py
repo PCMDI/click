@@ -13,7 +13,7 @@ split = 4
 #colormap = "viridis"
 #png_size = "2000x1200"
 
-def norm_func(data, args=None):
+def norm_func(data, J, args):
     return data/1000. 
 
 normalize = norm_func

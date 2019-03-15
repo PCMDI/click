@@ -147,7 +147,7 @@ if args.normalize is not False:
         # normalize
         data = (data-median) / median
     elif callable(args.normalize):  # Test if callable
-        data = args.normalize(data, args)
+        data = args.normalize(data, J, args)
     else:
         for k in args.normalize:
             dic[k] = args.normalize[k]
@@ -196,7 +196,10 @@ def onePortraitPlotPass(data, full_dic, CP, merge, multiple=1.1, sector=None):
             levs = vcs.mkscale(min, max)
             CP.PLOT_SETTINGS.levels = levs
             if CP.PLOT_SETTINGS.fillareacolors is None:
-                CP.PLOT_SETTINGS.fillareacolors = vcs.getcolors(levs, list(range(144, 156)), split=1)
+                if CP.PLOT_SETTINGS.colormap == "bl_rd_12"
+                    CP.PLOT_SETTINGS.fillareacolors = vcs.getcolors(levs, list(range(144, 156)), split=1)
+                else:
+                    CP.PLOT_SETTINGS.fillareacolors = vcs.getcolors(levs)
 
         clicks1, targets1, tips1, extras1 = CP.plot(
             data[..., :nX//2], full_dic, merge=merge,
