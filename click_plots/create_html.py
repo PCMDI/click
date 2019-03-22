@@ -1,61 +1,29 @@
 import os
-import sys
+import numpy.ma
 import shutil
+import vcs
+import pkg_resources
+import warnings
+
+click_egg = pkg_resources.resource_filename(
+    pkg_resources.Requirement.parse("click_plots"), "share/click_plots")
 
 
-def createModalTargets(data, targets_template, season=""):
-    # Season is optional. If used, we expect a single string value that indicates the season
-    # Axes have been "decorated" via P.decorate()
-    outs = []  # list of target html files
-    tips = []  # list of tooltips
-    extras = []  # list of extra attributes for "area" tags
-    flt = data.ravel()
-    indx = 0
-    # Y axis
+def write_modal_html(html_file, map_element, share_pth, pathout, modal=None):
+    full_share_path = os.path.join(pathout, share_pth)
+    if not os.path.exists(full_share_path):
+        os.makedirs(full_share_path)
+    for file in ["mapper.js", "cvi_tip_lib.js", "tooltip.css"]:
+        shutil.copy2(os.path.join(vcs.vcs_egg_path, file), full_share_path)
+    if modal is not None:
+        if not os.path.exists(modal):
+            warnings.warn(
+                "Could not locate your modal file {}, falling back on default".format(modal))
+            modal = os.path.join(click_egg, "js", "modal.js")
+    else:
+        modal = os.path.join(click_egg, "js", "modal.js")
+    shutil.copy2(modal, full_share_path)
 
-    variable_list = data.getAxis(0).id.split("___")
-    model_list = data.getAxis(-1).id.split("___")
-    for variable_index, variable in enumerate(variable_list):
-        targets_template.variable = variable
-        # X axis
-        for model_index, model in enumerate(model_list):
-            targets_template.model = model
-            fnm = targets_template()
-            # Here we test if
-            outs.append(fnm)
-            image = outs[-1].replace("html", "png")
-            value = flt[0]
-            # Each area must know which areas are next to it so the modal can traverse them
-            # We assign an id of the form "model-variable-season" to each area
-            # We then save neightbor ids in "data-" tags that the javascript will use to traverse by model/variable/etc...
-            model_left = model_list[model_index-1]+"-" + \
-                variable+"-"+season if model_index != 0 else ""
-            model_right = model_list[model_index+1]+"-"+variable + \
-                "-"+season if model_index+1 < len(model_list) else ""
-            variable_left = model+"-" + \
-                variable_list[variable_index-1]+"-" + \
-                season if variable_index != 0 else ""
-            variable_right = model+"-" + \
-                variable_list[variable_index+1]+"-" + \
-                season if variable_index+1 < len(variable_list) else ""
-            tips.append("Model: %s<br>Variable: %sValue: %.3g<div id='thumbnail'><img src='%s' width=200></div>" %
-                        (model, variable, value, image))
-            html_id = "{}-{}-{}".format(model, variable, season)
-            extras.append("id='{}' data-value='{}' data-image='{}'"
-                          "data-model='{}' data-modelLeft='{}' data-modelRight='{}'"
-                          "data-variable='{}' data-variableLeft='{}' data-variableRight='{}'"
-                          "data-season='{}'"  # data-seasonLeft='{}' data-seasonRight='{}'"
-                          .format(html_id, value, image, model, model_left, model_right, variable, variable_left, variable_right, season))
-            indx += 1
-    return outs, tips, extras
-
-
-def write_modal_html(html_file, map_element, share_pth):
-    print("TIPS AND MAPPER:", share_pth+"/mapper.js")
-    if not os.path.exists(share_pth):
-        os.makedirs(share_pth)
-    for file in ["mapper.js", "modal.js", "cvi_tip_lib.js", "tooltip.css"]:
-        shutil.copy2(os.path.join(sys.prefix, "share", "vcs", file), share_pth)
     with open(html_file, "w") as f:
         f.write("<html><head>")
         f.write('<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>')

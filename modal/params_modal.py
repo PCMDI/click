@@ -1,12 +1,19 @@
 import os
-data_path = "data/cmec_11022017"
-exp = 'historical'
-stat = 'rms_devam_xy' 
-results_dir = os.path.expanduser("~/www/click")
-title = 'Seasonal RMS: Deviations from annual mean (' + stat + ')'
-files_glob_pattern = "*regrid2*.json"
-bad = []
-seasons = ['djf', 'son', 'jja', 'mam']
-region = "global"
-normalize = True
-targets_template = "plots/cmip5/historical/%(stat)/%(variable)/%(variable).%(model)_%(season).png"
+data_path = "data/modes"
+statistic = 'std_model_pcs'
+flip = True
+results_dir = "crp"
+title = 'Test'
+targets_template = "data/plots/Panel6_%(mode)_%(season)_%(model)_%(realization).png"
+merge = [["model", "realization"], ["mode", "season"]]
+#normalize = 'median'
+#season = ["JJA","SON"]
+#realization = ["r1i1p1","r2i1p1"]
+split = 4
+#colormap = "viridis"
+#png_size = "2000x1200"
+
+def norm_func(data, J, args):
+    return data/1000. 
+
+normalize = norm_func
