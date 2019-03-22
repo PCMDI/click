@@ -9,7 +9,6 @@ import numpy
 import vcs
 import click_plots
 import ast
-import cdms2
 import MV2
 
 
@@ -46,6 +45,14 @@ inpt.add_argument(
 graph.add_argument("--split", type=int,
                     help="number of columns after which we split the portrait plot into two rows",
                     default=20)
+graph.add_argument("--watermark", help="use this image (or text if path is missing) as watermark")
+graph.add_argument("--watermark_font", help="For text watermark use this VCS font",default=1)
+graph.add_argument("--watermark_size", help="For text watermark use this font size",default=100)
+graph.add_argument("--watermark_math", help="For text watermark that need math rendering",action="store_true", default=False)
+graph.add_argument("--watermark_color",
+                   help="For text watermark use this font color [r,g,b,opacity]",
+                   type=ast.literal_eval,
+                   default=[60,50,50,25])
 outpt.add_argument("--png_template", help="template for portrait plot png file",
                     default="clickable_portrait.png")
 outpt.add_argument("--png_size",help="png output size", default="800x600")
@@ -196,7 +203,7 @@ def onePortraitPlotPass(data, full_dic, CP, merge, multiple=1.1, sector=None):
             levs = vcs.mkscale(min, max)
             CP.PLOT_SETTINGS.levels = levs
             if CP.PLOT_SETTINGS.fillareacolors is None:
-                if CP.PLOT_SETTINGS.colormap == "bl_rd_12"
+                if CP.PLOT_SETTINGS.colormap == "bl_rd_12":
                     CP.PLOT_SETTINGS.fillareacolors = vcs.getcolors(levs, list(range(144, 156)), split=1)
                 else:
                     CP.PLOT_SETTINGS.fillareacolors = vcs.getcolors(levs)
@@ -243,6 +250,33 @@ png = png_template()
 geo = CP.x.geometry()
 map_element = vcs.utils.mapPng(
     png, clicks, targets, tips, extras=extras, width=geo["width"], height=geo["height"])
+if args.watermark is not None:
+    if not os.path.isabs(args.watermark):  # relpath
+        watermark_path = os.path.join(pth, args.watermark)
+    else:
+        watermark_path = args.watermark
+    if not os.path.exists(watermark_path):  # not here must be text
+        watermark = vcs.createtext()
+        watermark.x = [.5]
+        watermark.y = [.5]
+        watermark.halign = "center"
+        watermark.valign = "half"
+        watermark.height = args.watermark_size
+        watermark.angle = -45
+        watermark.color = args.watermark_color
+        watermark.font = args.watermark_font
+        if args.watermark_math:
+            watermark.string = r"${}$".format(args.watermark)
+        else:
+            watermark.string = args.watermark
+        CP.x.plot(watermark)
+    else:  # Ok it's a png file
+        width = args.watermark_size
+        watermark = vcs.utils.Logo(watermark_path, width=width)
+        watermark.x = .5
+        watermark.y = .5
+        watermark.plot(CP.x)
+    CP.x.png(png)
 os.chdir(pth)
 html_filename = os.path.join(args.results_dir, html_template())
 share_pth = "js"
