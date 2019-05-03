@@ -47,7 +47,7 @@ $( document ).ready(function() {
     })
     $("#modal-content").on("click", ".btn.yaxis.decrement",function(e){
         console.log("yaxis.decrement")
-        var el = document.getElementById(element.dataset.yaxisleft)
+        var el = document.getElementById(element.dataset.yaxisdown)
         if(el){
             element = el
             populateModal()
@@ -55,7 +55,7 @@ $( document ).ready(function() {
     })
     $("#modal-content").on("click", ".btn.yaxis.increment",function(e){
         console.log("yaxis.increment")
-        var el = document.getElementById(element.dataset.yaxisright)
+        var el = document.getElementById(element.dataset.yaxisup)
         if(el){
             element = el
             populateModal()
@@ -113,8 +113,8 @@ function getContent(el){
     }
 
     if(element.dataset["yaxis"]){
-        prev_disabled = el.dataset["yaxisleft"] ? "" : "disabled"
-        next_disabled = el.dataset["yaxisright"] ? "" : "disabled"
+        prev_disabled = el.dataset["yaxisdown"] ? "" : "disabled"
+        next_disabled = el.dataset["yaxisup"] ? "" : "disabled"
         new_elements.push(
             $("".concat(
                 "<div id=current-yaxis>",

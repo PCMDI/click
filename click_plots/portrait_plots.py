@@ -234,17 +234,17 @@ class ClickablePortrait(Portrait):
             # Taking care of ylabels
             youts.append("{}<br><div id='thumbnail'><img src='{}' width=205></div>".format(y_value, self.ylabels_targets_template()))
             yhtml_id = "{}-na-na".format(y_value)
-            y_left = yaxis_list[y_index-1]+"-na-na"
+            y_down = yaxis_list[y_index-1]+"-na-na"
             if y_index == len(yaxis_list) - 1:
-                y_right = yaxis_list[0]+"-na-na"
+                y_up = yaxis_list[0]+"-na-na"
             else:
-                y_right = yaxis_list[y_index+1]+"-na-na"
+                y_up = yaxis_list[y_index+1]+"-na-na"
             yextras.append("id='{}' data-image='{}' "
                             "data-yaxisName='{}'"
-                            "data-yaxis='{}' data-yaxisLeft='{}' data-yaxisRight='{}' "
+                            "data-yaxis='{}' data-yaxisDown='{}' data-yaxisUp='{}' "
                             .format(yhtml_id, self.ylabels_targets_template(),
                                     y_key,
-                                    y_value, y_left, y_right))
+                                    y_value, y_down, y_up))
             # X axis
             for x_index, x_value in enumerate(xaxis_list):
                 if merge is not None:
@@ -293,14 +293,14 @@ class ClickablePortrait(Portrait):
                 x_right = xaxis_list[x_index+1]+"-"+y_value \
                     if x_index+1 < len(xaxis_list) else ""
                 x_right += "-{}".format(s_value)
-                y_left = x_value+"-" + \
+                y_down = x_value+"-" + \
                     yaxis_list[y_index-1] \
                     if y_index != 0 else ""
-                y_left += "-{}".format(s_value)
-                y_right = x_value+"-" + \
+                y_down += "-{}".format(s_value)
+                y_up = x_value+"-" + \
                     yaxis_list[y_index+1] \
                     if y_index+1 < len(yaxis_list) else ""
-                y_right += "-{}".format(s_value)
+                y_up += "-{}".format(s_value)
 
                 s_right = "{}-{}-{}".format(x_value, y_value, sec_right)
                 s_left = "{}-{}-{}".format(x_value, y_value, sec_left)
@@ -313,12 +313,12 @@ class ClickablePortrait(Portrait):
                 extras.append("id='{}' data-value='{}' data-image='{}' "
                               "data-xaxisName='{}' data-yaxisName='{}' data-sectorName='{}' "
                               "data-xaxis='{}' data-xaxisLeft='{}' data-xaxisRight='{}' "
-                              "data-yaxis='{}' data-yaxisLeft='{}' data-yaxisRight='{}' "
+                              "data-yaxis='{}' data-yaxisDown='{}' data-yaxisUp='{}' "
                               "data-sector='{}' data-sectorLeft='{}' data-sectorRight='{}'"
                               .format(html_id, value, image,
                                       x_key, y_key, s_key,
                                       x_value, x_left, x_right,
-                                      y_value, y_left, y_right,
+                                      y_value, y_down, y_up,
                                       s_value, s_left, s_right))
                 indx += 1
         return outs, tips, extras, xouts, xextras, youts, yextras
