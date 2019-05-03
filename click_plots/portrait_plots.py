@@ -142,10 +142,9 @@ class ClickablePortrait(Portrait):
         png_file = self.png_template()
         self.x.png(png_file)
 
-        #targets, tips, extras = click_plots.createModalTargets(data, self.targets_template, x_key, y_key, full_dic, merge=merge, sector=sector)
-        targets, tips, extras = self.createModalTargets(
+        # targets, tips, extras = click_plots.createModalTargets(data, self.targets_template, x_key, y_key, full_dic, merge=merge, sector=sector)
+        targets, tips, extras, tips_lbls_x, extras_lbls_x, tips_lbls_y, extras_lbls_y = self.createModalTargets(
             data, full_dic, merge=merge, sector=sector)
-
         # Creates clickable polygons numpy arrays
         click_areas = vcs.utils.meshToPngCoords(mesh, template, [
             meshfill.datawc_x1, meshfill.datawc_x2, meshfill.datawc_y1, meshfill.datawc_y2], png=png_file)
@@ -154,11 +153,10 @@ class ClickablePortrait(Portrait):
         click_labels_y = vcs.utils.axisToPngCoords([], meshfill, template, 'y1', [
             meshfill.datawc_x1, meshfill.datawc_x2, meshfill.datawc_y1, meshfill.datawc_y2], png=png_file)
 
-        targets_lbls_x = extras_lbls_x = tips_lbls_x = [
-            meshfill.xticlabels1[k] for k in sorted(meshfill.xticlabels1.keys())]
-        targets_lbls_y = extras_lbls_y = tips_lbls_y = [
-            meshfill.xticlabels1[k] for k in sorted(meshfill.xticlabels1.keys())]
-
+        targets_lbls_x = [
+            meshfill.xticlabels1[k] for k in sorted(meshfill.xticlabels1)]
+        targets_lbls_y = [
+            meshfill.yticlabels1[k] for k in sorted(meshfill.yticlabels1)]
         # when using multiple we have different shapes so we need to "extend"
         if click_areas.shape[-1] > click_labels_x.shape[-1]:
             # ok more vertices in click area
@@ -188,6 +186,10 @@ class ClickablePortrait(Portrait):
         outs = []  # list of target html files
         tips = []  # list of tooltips
         extras = []  # list of extra attributes for "area" tags
+        xouts = []
+        xextras = []
+        youts = []
+        yextras = []
         flt = data.ravel()
         inverted = {v: k for k, v in update_names.items()}
         indx = 0
@@ -218,26 +220,64 @@ class ClickablePortrait(Portrait):
                     if merger[0] in y_keys:  # ok it applies
                         values = y_value.split("_")
                         for value, key in zip(values, merger):
-                            setattr(self.targets_template, key,
-                                    reverse(inverted, value.strip()))
+                            for template_to_set in [self.targets_template,
+                                                    self.xlabels_targets_template,
+                                                    self.ylabels_targets_template]:
+                                setattr(template_to_set, key,
+                                        reverse(inverted, value.strip()))
             else:
-                setattr(self.targets_template, y_key,
-                        reverse(inverted, y_value.strip()))
+                for template_to_set in [self.targets_template,
+                                        self.xlabels_targets_template,
+                                        self.ylabels_targets_template]:
+                    setattr(template_to_set, y_key,
+                            reverse(inverted, y_value.strip()))
+            # Taking care of ylabels
+            youts.append("{}<br><div id='thumbnail'><img src='{}' width=205></div>".format(y_value, self.ylabels_targets_template()))
+            yhtml_id = "{}-na-na".format(y_value)
+            y_left = yaxis_list[y_index-1]+"-na-na"
+            if y_index == len(yaxis_list) - 1:
+                y_right = yaxis_list[0]+"-na-na"
+            else:
+                y_right = yaxis_list[y_index+1]+"-na-na"
+            yextras.append("id='{}' data-image='{}' "
+                            "data-yaxisName='{}'"
+                            "data-yaxis='{}' data-yaxisLeft='{}' data-yaxisRight='{}' "
+                            .format(yhtml_id, self.ylabels_targets_template(),
+                                    y_key,
+                                    y_value, y_left, y_right))
             # X axis
             for x_index, x_value in enumerate(xaxis_list):
                 if merge is not None:
                     for merger in merge:
                         if merger[0] in x_keys:  # ok it applies
-                            # print("FOUND {} in {}".format(merger[0], y_key))
                             values = x_value.split("_")
                             for value, key in zip(values, merger):
-                                # print("Setting {} to -{}-".format(key, value.strip()))
-                                setattr(self.targets_template, key,
-                                        reverse(inverted, value.strip()))
+                                for template_to_set in [self.targets_template,
+                                                        self.xlabels_targets_template,
+                                                        self.ylabels_targets_template]:
+                                    setattr(template_to_set, key,
+                                            reverse(inverted, value.strip()))
                 else:
-                    setattr(self.targets_template, x_key,
-                            reverse(inverted, x_value.strip()))
+                    for template_to_set in [self.targets_template,
+                                            self.xlabels_targets_template,
+                                            self.ylabels_targets_template]:
+                        setattr(template_to_set, x_key,
+                                reverse(inverted, x_value.strip()))
                 fnm = self.targets_template()
+                if y_index == 0:
+                    x_left = xaxis_list[x_index-1]+'-na-na'
+                    if x_index == len(xaxis_list) - 1:
+                        x_right = xaxis_list[0]+'-na-na'
+                    else:
+                        x_right = xaxis_list[x_index+1]+'-na-na'
+                    xouts.append("{}<br><div id='thumbnail'><img src='{}' width=200></div>".format(x_value, self.xlabels_targets_template()))
+                    xhtml_id = "{}-na-na".format(x_value)
+                    xextras.append("id='{}' data-image='{}' "
+                                    "data-xaxisName='{}'"
+                                    "data-xaxis='{}' data-xaxisLeft='{}' data-xaxisRight='{}' "
+                                    .format(xhtml_id, self.xlabels_targets_template(),
+                                            x_key,
+                                            x_value, x_left, x_right))
                 # Here we test if
                 outs.append(fnm)
                 image = outs[-1].replace("html", "png")
@@ -281,4 +321,4 @@ class ClickablePortrait(Portrait):
                                       y_value, y_left, y_right,
                                       s_value, s_left, s_right))
                 indx += 1
-        return outs, tips, extras
+        return outs, tips, extras, xouts, xextras, youts, yextras

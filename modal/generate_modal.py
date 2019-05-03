@@ -33,6 +33,12 @@ graph.add_argument("--title", help="title for plot")
 inpt.add_argument("--bad", help="list of bad models", default=[])
 inpt.add_argument("--normalize",
                     help="normalize results by statistic", default=False)
+web.add_argument("--xlabels_targets_template",
+                    default="data/plots/Panel6_%(model)_%(rip).png",
+                    help="template to find targets destination for x labels")
+web.add_argument("--ylabels_targets_template",
+                    default="data/plots/Panel6_%(mode)_%(season).png",
+                    help="template to find targets destination for y labels")
 web.add_argument("--targets_template",
                     default="data/plots/Panel6_%(mode)_%(season)_%(model)_%(rip).png",
                     help="template to find targets destination")
@@ -124,6 +130,8 @@ if yanked_help:
     sys.argv.insert(1, "--help")
 args = parser.get_parameter(argparse_vals_only=False)
 targets_template = genutil.StringConstructor(args.targets_template)
+xlabels_targets_template = genutil.StringConstructor(args.xlabels_targets_template)
+ylabels_targets_template = genutil.StringConstructor(args.ylabels_targets_template)
 png_template = genutil.StringConstructor(args.png_template)
 html_template = genutil.StringConstructor(args.html_template)
 
@@ -137,6 +145,8 @@ for k in json_keys:
         dic[k[2:]] = att
         if not isinstance(att, (list, tuple)):
             setattr(targets_template, k[2:], att)
+            setattr(xlabels_targets_template, k[2:], att)
+            setattr(ylabels_targets_template, k[2:], att)
             setattr(png_template, k[2:], att)
             setattr(html_template, k[2:], att)
 if args.merge is not None:
@@ -145,6 +155,8 @@ if args.merge is not None:
 
 data = J(**dic)(squeeze=1)
 
+if args.flip:
+    data = MV2.transpose(data)
 if args.normalize is not False:
     if args.normalize == "median":
         median = genutil.statistics.median(data, axis=1)[0]
@@ -161,8 +173,6 @@ if args.normalize is not False:
         norm = J(**dic)(squeeze=1)
         data /= norm
 
-if args.flip:
-    data = MV2.transpose(data)
 # prepare axis name for portrait plot
 # Add extra sapaces at the end
 full_dic = args.names_update
@@ -179,6 +189,8 @@ x = vcs.init(bg=True, geometry={"width":int(geo[0]), "height":int(geo[1])})
 CP = click_plots.ClickablePortrait(
     x=x, nodata_png=args.no_data, missing_png=args.no_target)
 CP.targets_template = targets_template
+CP.xlabels_targets_template = xlabels_targets_template
+CP.ylabels_targets_template = ylabels_targets_template
 CP.png_template = png_template
 CP.PLOT_SETTINGS.fillareacolors = args.colors
 CP.PLOT_SETTINGS.levels = args.levels

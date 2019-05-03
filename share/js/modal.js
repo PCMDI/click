@@ -95,35 +95,39 @@ function getContent(el){
     var prev_disabled;
     var next_disabled;
 
-    prev_disabled = el.dataset["xaxisleft"] ? "" : "disabled"
-    next_disabled = el.dataset["xaxisright"] ? "" : "disabled"
-    new_elements.push(
-        $("".concat(
-            "<div id=current-xaxis>",
-                "<button type='button' class='btn btn-outline-info btn-sm xaxis decrement' style='line-height: 5px'", prev_disabled,"> &lsaquo; </button>",
-                "<button type='button' class='btn btn-outline-info btn-sm xaxis increment' style='line-height: 5px'", next_disabled,"> &rsaquo; </button>",
-                "<span class='field-label' style='margin-left: 4px;'>", el.dataset["xaxisname"], ": </span>",
-                "<span class='field-value'>",
-                el.dataset["xaxis"],
-                " </span>",
-            "</div>"
-        ))
-    )
+    if(element.dataset["xaxis"]){
+        prev_disabled = el.dataset["xaxisleft"] ? "" : "disabled"
+        next_disabled = el.dataset["xaxisright"] ? "" : "disabled"
+        new_elements.push(
+            $("".concat(
+                "<div id=current-xaxis>",
+                    "<button type='button' class='btn btn-outline-info btn-sm xaxis decrement' style='line-height: 5px'", prev_disabled,"> &#129064; </button>",
+                    "<button type='button' class='btn btn-outline-info btn-sm xaxis increment' style='line-height: 5px'", next_disabled,"> &#129066; </button>",
+                    "<span class='field-label' style='margin-left: 4px;'>", el.dataset["xaxisname"], ": </span>",
+                    "<span class='field-value'>",
+                    el.dataset["xaxis"],
+                    " </span>",
+                "</div>"
+            ))
+        )
+    }
 
-    prev_disabled = el.dataset["yaxisleft"] ? "" : "disabled"
-    next_disabled = el.dataset["yaxisright"] ? "" : "disabled"
-    new_elements.push(
-        $("".concat(
-            "<div id=current-yaxis>",
-                "<button type='button' class='btn btn-outline-info btn-sm yaxis decrement' style='line-height: 5px'", prev_disabled,"> &lsaquo; </button>",
-                "<button type='button' class='btn btn-outline-info btn-sm yaxis increment' style='line-height: 5px'", next_disabled,"> &rsaquo; </button>",
+    if(element.dataset["yaxis"]){
+        prev_disabled = el.dataset["yaxisleft"] ? "" : "disabled"
+        next_disabled = el.dataset["yaxisright"] ? "" : "disabled"
+        new_elements.push(
+            $("".concat(
+                "<div id=current-yaxis>",
+                "<button type='button' class='btn btn-outline-info btn-sm yaxis decrement' style='line-height: 5px'", prev_disabled, "> &#129067; </button>",
+                "<button type='button' class='btn btn-outline-info btn-sm yaxis increment' style='line-height: 5px'", next_disabled, "> &#129065; </button>",
                 "<span class='field-label' style='margin-left: 4px;'>", el.dataset["yaxisname"], ": </span>",
                 "<span class='field-value'>",
                 el.dataset["yaxis"],
                 " </span>",
-            "</div>"
-        ))
-    )
+                "</div>"
+            ))
+        )
+    }
 
     if(element.dataset["sector"]){
         prev_disabled = el.dataset["sectorleft"] ? "" : "disabled"
@@ -131,8 +135,8 @@ function getContent(el){
         new_elements.push(
             $("".concat(
                 "<div id=current-sector>",
-                    "<button type='button' class='btn btn-outline-info btn-sm sector decrement' style='line-height: 5px'", next_disabled,"> &lsaquo; </button>",
-                    "<button type='button' class='btn btn-outline-info btn-sm sector increment' style='line-height: 5px'", next_disabled,"> &rsaquo; </button>",
+                    "<button type='button' class='btn btn-outline-info btn-sm sector increment' style='line-height: 5px'", next_disabled,"> &#10226; </button>",
+                    "<button type='button' class='btn btn-outline-info btn-sm sector decrement' style='line-height: 5px'", next_disabled,"> &#10227; </button>",
                     "<span class='field-label' style='margin-left: 4px;'>", el.dataset["sectorname"], ": </span>",
                     "<span class='field-value'>",
                     el.dataset["sector"],
@@ -142,21 +146,25 @@ function getContent(el){
         )
     }
 
-    new_elements.push(
-        $("".concat(
-            "<div id=current-value>",
-                "<button type='button' class='btn btn-outline-secondary btn-sm' style='visibility:hidden;' disabled> &lsaquo; </button>",
-                "<button type='button' class='btn btn-outline-secondary btn-sm' style='visibility:hidden;' disabled> &rsaquo; </button>",
-                "<span class='field-label' style='margin-left: 4px;'>Value: </span>",
-                "<span class='field-value'>",
-                el.dataset["value"],
-                " </span>",
-            "</div>"
-        ))
-    )
+    if(element.dataset["value"]){
+        new_elements.push(
+            $("".concat(
+                "<div id=current-value>",
+                    "<button type='button' class='btn btn-outline-secondary btn-sm' style='visibility:hidden;' disabled> &lsaquo; </button>",
+                    "<button type='button' class='btn btn-outline-secondary btn-sm' style='visibility:hidden;' disabled> &rsaquo; </button>",
+                    "<span class='field-label' style='margin-left: 4px;'>Value: </span>",
+                    "<span class='field-value'>",
+                    el.dataset["value"],
+                    " </span>",
+                "</div>"
+            ))
+        )
+    }
 
-    new_elements.push(
-        $("".concat("<img class='full-image' style='margin: 0 auto; width: 100%; max-height: calc(100% - 300px);' src='", el.dataset["image"], "'>"))
-    )
+    if(element.dataset["image"]){
+        new_elements.push(
+            $("".concat("<img class='full-image' style='margin: 0 auto; width: 100%; max-height: calc(100% - 300px);' src='", el.dataset["image"], "'>"))
+        )
+    }
     return new_elements
 }
