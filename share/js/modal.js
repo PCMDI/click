@@ -101,8 +101,8 @@ function getContent(el){
         new_elements.push(
             $("".concat(
                 "<div id=current-xaxis>",
-                    "<button type='button' class='btn btn-outline-info btn-sm xaxis decrement' style='line-height: 5px'", prev_disabled,"> &#129064; </button>",
-                    "<button type='button' class='btn btn-outline-info btn-sm xaxis increment' style='line-height: 5px'", next_disabled,"> &#129066; </button>",
+                    "<button type='button' class='btn btn-outline-info btn-sm xaxis decrement' style='line-height: 5px'", prev_disabled,"> &#8592; </button>",
+                    "<button type='button' class='btn btn-outline-info btn-sm xaxis increment' style='line-height: 5px'", next_disabled,"> &#8594; </button>",
                     "<span class='field-label' style='margin-left: 4px;'>", el.dataset["xaxisname"], ": </span>",
                     "<span class='field-value'>",
                     el.dataset["xaxis"],
@@ -118,8 +118,8 @@ function getContent(el){
         new_elements.push(
             $("".concat(
                 "<div id=current-yaxis>",
-                "<button type='button' class='btn btn-outline-info btn-sm yaxis decrement' style='line-height: 5px'", prev_disabled, "> &#129067; </button>",
-                "<button type='button' class='btn btn-outline-info btn-sm yaxis increment' style='line-height: 5px'", next_disabled, "> &#129065; </button>",
+                "<button type='button' class='btn btn-outline-info btn-sm yaxis decrement' style='line-height: 5px'", prev_disabled, "> &#8595; </button>",
+                "<button type='button' class='btn btn-outline-info btn-sm yaxis increment' style='line-height: 5px'", next_disabled, "> &#8593; </button>",
                 "<span class='field-label' style='margin-left: 4px;'>", el.dataset["yaxisname"], ": </span>",
                 "<span class='field-value'>",
                 el.dataset["yaxis"],
@@ -135,7 +135,7 @@ function getContent(el){
         new_elements.push(
             $("".concat(
                 "<div id=current-sector>",
-                    "<button type='button' class='btn btn-outline-info btn-sm sector increment' style='line-height: 5px'", next_disabled,"> &#10226; </button>",
+                    "<button type='button' class='btn btn-outline-info btn-sm sector increment' style='line-height: 5px'", prev_disabled,"> &#10226; </button>",
                     "<button type='button' class='btn btn-outline-info btn-sm sector decrement' style='line-height: 5px'", next_disabled,"> &#10227; </button>",
                     "<span class='field-label' style='margin-left: 4px;'>", el.dataset["sectorname"], ": </span>",
                     "<span class='field-value'>",
