@@ -9,7 +9,7 @@ click_egg = pkg_resources.resource_filename(
     pkg_resources.Requirement.parse("click_plots"), "share/click_plots")
 
 
-def write_modal_html(html_file, map_element, share_pth, pathout, modal=None):
+def write_modal_html(html_file, map_element, share_pth, pathout, modal=None, title="Clickable Portrait Plots"):
     full_share_path = os.path.join(pathout, share_pth)
     if not os.path.exists(full_share_path):
         os.makedirs(full_share_path)
@@ -39,7 +39,7 @@ def write_modal_html(html_file, map_element, share_pth, pathout, modal=None):
         f.write(
             '<link rel="stylesheet" type="text/css" href="%s/tooltip.css" />' % share_pth)
         f.write("</head><body>")
-        f.write("<h1>Clickable Portraits Plots</h1>")
+        f.write("<h1>{}</h1>".format(title))
         f.write(map_element)
         # f.write("$('area').hover(function(){$(this).css('border','5px');},function(){$(this).css('border','0px');});")
         f.write("</body></head></html>")

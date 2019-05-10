@@ -223,28 +223,34 @@ class ClickablePortrait(Portrait):
                             for template_to_set in [self.targets_template,
                                                     self.xlabels_targets_template,
                                                     self.ylabels_targets_template]:
-                                setattr(template_to_set, key,
-                                        reverse(inverted, value.strip()))
+                                if template_to_set is not None:
+                                    setattr(template_to_set, key,
+                                            reverse(inverted, value.strip()))
             else:
                 for template_to_set in [self.targets_template,
                                         self.xlabels_targets_template,
                                         self.ylabels_targets_template]:
-                    setattr(template_to_set, y_key,
-                            reverse(inverted, y_value.strip()))
+                    if template_to_set is not None:
+                        setattr(template_to_set, y_key,
+                                reverse(inverted, y_value.strip()))
             # Taking care of ylabels
-            youts.append("{}<br><div id='thumbnail'><img src='{}' width=205></div>".format(y_value, self.ylabels_targets_template()))
-            yhtml_id = "{}-na-na".format(y_value)
-            y_down = yaxis_list[y_index-1]+"-na-na"
-            if y_index == len(yaxis_list) - 1:
-                y_up = yaxis_list[0]+"-na-na"
+            if self.ylabels_targets_template is not None:
+                youts.append("{}<br><div id='thumbnail'><img src='{}' width=205></div>".format(y_value, self.ylabels_targets_template()))
+                yhtml_id = "{}-na-na".format(y_value)
+                y_down = yaxis_list[y_index-1]+"-na-na"
+                if y_index == len(yaxis_list) - 1:
+                    y_up = yaxis_list[0]+"-na-na"
+                else:
+                    y_up = yaxis_list[y_index+1]+"-na-na"
+                yextras.append("id='{}' data-image='{}' "
+                                "data-yaxisName='{}'"
+                                "data-yaxis='{}' data-yaxisDown='{}' data-yaxisUp='{}' "
+                                .format(yhtml_id, self.ylabels_targets_template(),
+                                        y_key,
+                                        y_value, y_down, y_up))
             else:
-                y_up = yaxis_list[y_index+1]+"-na-na"
-            yextras.append("id='{}' data-image='{}' "
-                            "data-yaxisName='{}'"
-                            "data-yaxis='{}' data-yaxisDown='{}' data-yaxisUp='{}' "
-                            .format(yhtml_id, self.ylabels_targets_template(),
-                                    y_key,
-                                    y_value, y_down, y_up))
+                youts.append("{}".format(y_value))
+                yextras.append("")
             # X axis
             for x_index, x_value in enumerate(xaxis_list):
                 if merge is not None:
@@ -255,14 +261,16 @@ class ClickablePortrait(Portrait):
                                 for template_to_set in [self.targets_template,
                                                         self.xlabels_targets_template,
                                                         self.ylabels_targets_template]:
-                                    setattr(template_to_set, key,
-                                            reverse(inverted, value.strip()))
+                                    if template_to_set is not None:
+                                        setattr(template_to_set, key,
+                                                reverse(inverted, value.strip()))
                 else:
                     for template_to_set in [self.targets_template,
                                             self.xlabels_targets_template,
                                             self.ylabels_targets_template]:
-                        setattr(template_to_set, x_key,
-                                reverse(inverted, x_value.strip()))
+                        if template_to_set is not None:
+                            setattr(template_to_set, x_key,
+                                    reverse(inverted, x_value.strip()))
                 fnm = self.targets_template()
                 if y_index == 0:
                     x_left = xaxis_list[x_index-1]+'-na-na'
@@ -270,14 +278,18 @@ class ClickablePortrait(Portrait):
                         x_right = xaxis_list[0]+'-na-na'
                     else:
                         x_right = xaxis_list[x_index+1]+'-na-na'
-                    xouts.append("{}<br><div id='thumbnail'><img src='{}' width=200></div>".format(x_value, self.xlabels_targets_template()))
-                    xhtml_id = "{}-na-na".format(x_value)
-                    xextras.append("id='{}' data-image='{}' "
-                                    "data-xaxisName='{}'"
-                                    "data-xaxis='{}' data-xaxisLeft='{}' data-xaxisRight='{}' "
-                                    .format(xhtml_id, self.xlabels_targets_template(),
-                                            x_key,
-                                            x_value, x_left, x_right))
+                    if self.xlabels_targets_template is not None:
+                        xouts.append("{}<br><div id='thumbnail'><img src='{}' width=200></div>".format(x_value, self.xlabels_targets_template()))
+                        xhtml_id = "{}-na-na".format(x_value)
+                        xextras.append("id='{}' data-image='{}' "
+                                        "data-xaxisName='{}'"
+                                        "data-xaxis='{}' data-xaxisLeft='{}' data-xaxisRight='{}' "
+                                        .format(xhtml_id, self.xlabels_targets_template(),
+                                                x_key,
+                                                x_value, x_left, x_right))
+                    else:
+                        xouts.append("{}".format(x_value))
+                        xextras.append("")
                 # Here we test if
                 outs.append(fnm)
                 image = outs[-1].replace("html", "png")
