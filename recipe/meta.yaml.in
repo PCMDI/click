@@ -1,0 +1,28 @@
+package:
+    name: click_plots
+    version: @VERSION@
+
+source:
+    git_url: git@github.com:PCMDI/click
+    git_rev: @UVCDAT_BRANCH@
+
+build:
+    script: python setup.py install
+    number: @BUILD_NUMBER@
+    noarch: python
+
+requirements:
+  build:
+    - python {{ python}}
+    - setuptools
+  run:
+    - python {{ python }}
+    - vcs
+    - cdms2
+    - pcmdi_metrics
+
+
+about:
+    home:  http://gitub.com/PCMDI/click
+    summary: The Click package allows user to generate highly customizable click portraits
+
