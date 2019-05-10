@@ -13,11 +13,12 @@ p = subprocess.Popen(
     stdout=subprocess.PIPE,
     stderr=subprocess.PIPE)
 try:
-    descr = p.stdout.readlines()[0].strip()
+    descr = p.stdout.readlines()[0].decode("utf-8").strip()
     Version = "-".join(descr.split("-")[:-2])
     if Version == "":
         Version = descr
-except:
+except Exception as err:
+    print("Error:", err)
     descr = Version
 
 p = subprocess.Popen(

@@ -4,9 +4,26 @@ import click_plots
 import numpy
 import pkg_resources
 import os
+import warnings
 
 egg_path = pkg_resources.resource_filename(
     pkg_resources.Requirement.parse("pcmdi_metrics"), "share/pmp")
+
+
+def generate_thumbnail(image, size):
+    thumb = list(os.path.splitext(image))
+    thumb[0] = thumb[0]+"_thumb"
+    thumb = "".join(thumb)
+    if not os.path.exists(thumb):
+        try:
+            from PIL import Image
+        except ImportError:
+            warnings.warn("Could not find pillow module, will use original")
+            return image
+        img = Image.open(image)
+        img.thumbnail([ int(x) for x in size.split("x")])
+        img.save(thumb, "png")
+    return thumb
 
 
 def reverse(inverted, value):
@@ -200,7 +217,7 @@ class ClickablePortrait(Portrait):
         y_keys = y_key.split("_")
         if sector is not None:
             s_key = sector.id
-            s_value = getattr(self.targets_template, s_key)
+            s_value = getattr(self.cell_tooltips_images_template, s_key)
             s_index = sector[:].tolist().index(s_value)
             if s_index == len(sector)-1:
                 sec_right = sector[0]
@@ -220,22 +237,33 @@ class ClickablePortrait(Portrait):
                     if merger[0] in y_keys:  # ok it applies
                         values = y_value.split("_")
                         for value, key in zip(values, merger):
-                            for template_to_set in [self.targets_template,
-                                                    self.xlabels_targets_template,
-                                                    self.ylabels_targets_template]:
+                            for template_to_set in [self.cell_tooltips_images_template,
+                                                    self.cell_modal_images_template,
+                                                    self.xlabels_tooltips_images_template,
+                                                    self.xlabels_modal_images_template,
+                                                    self.ylabels_tooltips_images_template,
+                                                    self.ylabels_modal_images_template,
+                            ]:
                                 if template_to_set is not None:
                                     setattr(template_to_set, key,
                                             reverse(inverted, value.strip()))
             else:
-                for template_to_set in [self.targets_template,
-                                        self.xlabels_targets_template,
-                                        self.ylabels_targets_template]:
+                for template_to_set in [self.cell_tooltips_images_template,
+                                        self.cell_modal_images_template,
+                                        self.xlabels_tooltips_images_template,
+                                        self.xlabels_modal_images_template,
+                                        self.ylabels_tooltips_images_template,
+                                        self.ylabels_modal_images_template,
+                ]:
                     if template_to_set is not None:
                         setattr(template_to_set, y_key,
                                 reverse(inverted, y_value.strip()))
             # Taking care of ylabels
-            if self.ylabels_targets_template is not None:
-                youts.append("{}<br><div id='thumbnail'><img src='{}' width=205></div>".format(y_value, self.ylabels_targets_template()))
+            if self.ylabels_tooltips_images_template is not None:
+                image = self.ylabels_tooltips_images_template()
+                if os.path.exists(image) and self.thumbnails:
+                    image = generate_thumbnail(image, self.thumbnails_size)
+                youts.append(self.ylabels_tooltips_html_template().format(value=y_value, image=image))
                 yhtml_id = "{}-na-na".format(y_value)
                 y_down = yaxis_list[y_index-1]+"-na-na"
                 if y_index == len(yaxis_list) - 1:
@@ -245,7 +273,7 @@ class ClickablePortrait(Portrait):
                 yextras.append("id='{}' data-image='{}' "
                                 "data-yaxisName='{}'"
                                 "data-yaxis='{}' data-yaxisDown='{}' data-yaxisUp='{}' "
-                                .format(yhtml_id, self.ylabels_targets_template(),
+                                .format(yhtml_id, self.ylabels_modal_images_template(),
                                         y_key,
                                         y_value, y_down, y_up))
             else:
@@ -258,43 +286,61 @@ class ClickablePortrait(Portrait):
                         if merger[0] in x_keys:  # ok it applies
                             values = x_value.split("_")
                             for value, key in zip(values, merger):
-                                for template_to_set in [self.targets_template,
-                                                        self.xlabels_targets_template,
-                                                        self.ylabels_targets_template]:
+                                for template_to_set in [self.cell_tooltips_images_template,
+                                                        self.cell_modal_images_template,
+                                                        self.xlabels_tooltips_images_template,
+                                                        self.xlabels_modal_images_template,
+                                                        self.ylabels_tooltips_images_template,
+                                                        self.ylabels_modal_images_template,
+                                ]:
                                     if template_to_set is not None:
                                         setattr(template_to_set, key,
                                                 reverse(inverted, value.strip()))
                 else:
-                    for template_to_set in [self.targets_template,
-                                            self.xlabels_targets_template,
-                                            self.ylabels_targets_template]:
+                    for template_to_set in [self.cell_tooltips_images_template,
+                                            self.cell_modal_images_template,
+                                            self.xlabels_tooltips_images_template,
+                                            self.xlabels_modal_images_template,
+                                            self.ylabels_tooltips_images_template,
+                                            self.ylabels_modal_images_template,
+                    ]:
                         if template_to_set is not None:
                             setattr(template_to_set, x_key,
                                     reverse(inverted, x_value.strip()))
-                fnm = self.targets_template()
                 if y_index == 0:
                     x_left = xaxis_list[x_index-1]+'-na-na'
                     if x_index == len(xaxis_list) - 1:
                         x_right = xaxis_list[0]+'-na-na'
                     else:
                         x_right = xaxis_list[x_index+1]+'-na-na'
-                    if self.xlabels_targets_template is not None:
-                        xouts.append("{}<br><div id='thumbnail'><img src='{}' width=200></div>".format(x_value, self.xlabels_targets_template()))
+                    if self.xlabels_tooltips_images_template is not None:
+                        image = self.xlabels_tooltips_images_template()
+                        if os.path.exists(image) and self.thumbnails:
+                            image = generate_thumbnail(image, self.thumbnails_size)
+                        xouts.append(self.xlabels_tooltips_html_template().format(value=x_value, image=image))
                         xhtml_id = "{}-na-na".format(x_value)
                         xextras.append("id='{}' data-image='{}' "
                                         "data-xaxisName='{}'"
                                         "data-xaxis='{}' data-xaxisLeft='{}' data-xaxisRight='{}' "
-                                        .format(xhtml_id, self.xlabels_targets_template(),
+                                        .format(xhtml_id, self.xlabels_modal_images_template(),
                                                 x_key,
                                                 x_value, x_left, x_right))
                     else:
                         xouts.append("{}".format(x_value))
                         xextras.append("")
                 # Here we test if
-                outs.append(fnm)
+                fnm_tip = self.cell_tooltips_images_template()
+                modal_image = self.cell_modal_images_template()
+                outs.append(fnm_tip)
                 image = outs[-1].replace("html", "png")
-                if not os.path.exists(fnm):
+                modal_image = modal_image.replace("html", "png")
+                if not os.path.exists(fnm_tip):
                     image = self.missing_png
+                else:
+                    if self.thumbnails:
+                        image = generate_thumbnail(image, self.thumbnails_size)
+                if not os.path.exists(modal_image):
+                    modal_image = self.missing_png
                 value = flt[indx]
                 # Each area must know which areas are next to it so the modal can traverse them
                 # We assign an id of the form "x_value-y_value" to each area
@@ -319,15 +365,15 @@ class ClickablePortrait(Portrait):
 
                 if numpy.ma.is_masked(value):
                     image = self.nodata_png
-                tips.append("%s: %s<br>%s: %sValue: %.3g<div id='thumbnail'><img src='%s' width=200></div>" %
-                            (x_key, x_value, y_key, y_value, value, image))
+                    modal_image = self.nodata_png
+                tips.append(self.cell_tooltips_html_template().format(x_key=x_key, x_value=x_value, y_key=y_key, y_value=y_value, value=value, image=image))
                 html_id = "{}-{}-{}".format(x_value, y_value, s_value)
                 extras.append("id='{}' data-value='{}' data-image='{}' "
                               "data-xaxisName='{}' data-yaxisName='{}' data-sectorName='{}' "
                               "data-xaxis='{}' data-xaxisLeft='{}' data-xaxisRight='{}' "
                               "data-yaxis='{}' data-yaxisDown='{}' data-yaxisUp='{}' "
                               "data-sector='{}' data-sectorLeft='{}' data-sectorRight='{}'"
-                              .format(html_id, value, image,
+                              .format(html_id, value, modal_image,
                                       x_key, y_key, s_key,
                                       x_value, x_left, x_right,
                                       y_value, y_down, y_up,

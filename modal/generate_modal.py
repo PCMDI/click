@@ -33,19 +33,36 @@ web.add_argument("--title", help="title for plot")
 inpt.add_argument("--bad", help="list of bad models", default=[])
 inpt.add_argument("--normalize",
                     help="normalize results by statistic", default=False)
-web.add_argument("--xlabels_targets_template",
+web.add_argument("--modal", help="use a custom modal javascript file", default=None)
+web.add_argument("--cell_tooltips_html_template", help="html code for tooltip, png image template defined bellow",
+                 default="{x_key}: {x_value}<br>{y_key}: {y_value}<br>Value: {value:3g}<div id='thumbnail'><img src='{image}' width=200></div>")
+web.add_argument("--cell_tooltips_images_template",
+                    default="data/plots/Panel6_%(mode)_%(season)_%(model)_%(rip).png",
+                    help="template to find tooltips targets destination")
+web.add_argument("--cell_modal_images_template",
+                    default=True,
+                    help="template to find modal targets destination. If set to `True` then copies tooltip")
+web.add_argument("--xlabels_tooltips_html_template",
+                    default="{value}<br><div id='thumbnail'><img src='{image}' width=200></div>",
+                    help="html code for x labels tooltips")
+web.add_argument("--xlabels_tooltips_images_template",
                     default=None,
                     help="template to find targets destination for x labels")
-web.add_argument("--ylabels_targets_template",
+web.add_argument("--xlabels_modal_images_template",
+                    default=True,
+                    help="template to find modal target destination for x labels. If set to `True` then copies tooltip")
+web.add_argument("--ylabels_tooltips_html_template",
+                    default="{value}<br><div id='thumbnail'><img src='{image}' width=200></div>",
+                    help="html code for y labels tooltips")
+web.add_argument("--ylabels_tooltips_images_template",
                     default=None,
                     help="template to find targets destination for y labels")
-web.add_argument("--targets_template",
-                    default="data/plots/Panel6_%(mode)_%(season)_%(model)_%(rip).png",
-                    help="template to find targets destination")
+web.add_argument("--ylabels_modal_images_template",
+                    default=True,
+                    help="template to find modal targets destination for y labels. If set to `True` then copies tooltip")
 graph.add_argument("--flip", action="store_true", default=False)
 graph.add_argument(
     "--names-update", help="a dictionary to update axes labels", default={})
-web.add_argument("--modal", help="use a custom modal file", default=None)
 inpt.add_argument(
     "--merge", help="merge json dimensions together", default=None)
 graph.add_argument("--split", type=int,
@@ -62,12 +79,16 @@ graph.add_argument("--watermark_color",
 outpt.add_argument("--png_template", help="template for portrait plot png file",
                     default="clickable_portrait.png")
 outpt.add_argument("--png_size",help="png output size", default="800x600")
-web.add_argument("--html_template", help="template for html output filename",
+web.add_argument("--html_template_file", help="template for html output filename",
                     default="clickable_portrait.html")
 web.add_argument(
     "--no_target", help="png file to use when target png is missing")
 web.add_argument(
     "--no_data", help="png file to use when no data is available")
+web.add_argument(
+    "--thumbnails", help="generate thumbnails images png", action="store_true", default=False)
+web.add_argument(
+    "--thumbnails_size", help="size to generate thumbnails images png", default="150x150")
 inpt.add_argument(
     "--sector", help="name of extra variable to use as 'sector' (triangles) in portrait plot")
 graph.add_argument("--levels", help="levels to use for portrait plots")
@@ -129,19 +150,25 @@ for k in json_keys:
 if yanked_help:
     sys.argv.insert(1, "--help")
 args = parser.get_parameter(argparse_vals_only=False)
-targets_template = genutil.StringConstructor(args.targets_template)
-if args.xlabels_targets_template is not None:
-    xlabels_targets_template = genutil.StringConstructor(args.xlabels_targets_template)
-else:
-    xlabels_targets_template = None
-if args.ylabels_targets_template is not None:
-    ylabels_targets_template = genutil.StringConstructor(args.ylabels_targets_template)
-else:
-    ylabels_targets_template = None
-png_template = genutil.StringConstructor(args.png_template)
-html_template = genutil.StringConstructor(args.html_template)
 
-
+names = ["png_template", "html_template_file"]
+for elt in ["cell", "xlabels", "ylabels"]:
+    names.append("{}_tooltips_html_template".format(elt))
+    for elt_type in ["tooltips", "modal"]:
+        names.append("{}_{}_images_template".format(elt, elt_type))
+for name in names:
+    if getattr(args, name) not in [None, True]:
+        exec("{name} = genutil.StringConstructor(args.{name})".format(name=name), globals(), locals())
+    else:
+        exec("{name} = args.{name}".format(name=name), globals(), locals())
+if xlabels_modal_images_template is True:
+    xlabels_modal_images_template = xlabels_tooltips_images_template
+if ylabels_modal_images_template is True:
+    ylabels_modal_images_template = ylabels_tooltips_images_template
+if ylabels_modal_images_template is True:
+    ylabels_modal_images_template = ylabels_tooltips_images_template
+if cell_modal_images_template is True:
+    cell_modal_images_template = cell_tooltips_images_template
 pathout = args.results_dir
 
 dic = {}
@@ -150,13 +177,9 @@ for k in json_keys:
     if att is not None:
         dic[k[2:]] = att
         if not isinstance(att, (list, tuple)):
-            setattr(targets_template, k[2:], att)
-            if xlabels_targets_template is not None:
-                setattr(xlabels_targets_template, k[2:], att)
-            if ylabels_targets_template is not None:
-                setattr(ylabels_targets_template, k[2:], att)
-            setattr(png_template, k[2:], att)
-            setattr(html_template, k[2:], att)
+            for name in names:
+                cmd = "if isinstance({name}, genutil.StringConstructor): setattr({name}, k[:2], att)".format(name=name)
+                exec(cmd, globals(), locals())
 if args.merge is not None:
     dic["merge"] = args.merge
 
@@ -182,7 +205,7 @@ if args.normalize is not False:
         data /= norm
 
 # prepare axis name for portrait plot
-# Add extra sapaces at the end
+# Add extra spaces at the end
 full_dic = args.names_update
 
 
@@ -196,10 +219,13 @@ geo = args.png_size.split("x")
 x = vcs.init(bg=True, geometry={"width":int(geo[0]), "height":int(geo[1])})
 CP = click_plots.ClickablePortrait(
     x=x, nodata_png=args.no_data, missing_png=args.no_target)
-CP.targets_template = targets_template
-CP.xlabels_targets_template = xlabels_targets_template
-CP.ylabels_targets_template = ylabels_targets_template
-CP.png_template = png_template
+
+# tips and modal templatates
+CP.thumbnails = args.thumbnails
+CP.thumbnails_size = args.thumbnails_size
+for name in names:
+    print("SETTING: {} on CP".format(name))
+    exec("setattr(CP,'{name}',{name})".format(name=name), globals(), locals())
 CP.PLOT_SETTINGS.fillareacolors = args.colors
 CP.PLOT_SETTINGS.levels = args.levels
 CP.PLOT_SETTINGS.colormap = args.colormap
@@ -249,8 +275,10 @@ if args.sector is not None:
     nSectors = len(sectors) / 10.
     clicks = None
     for i, sec in enumerate(sectors):
-        setattr(CP.targets_template, args.sector, sec)
-        setattr(CP.png_template, args.sector, sec)
+        for name in names:
+            sub = getattr(CP, name)
+            if isinstance(sub, genutil.StringConstructor):
+                setattr(sub, args.sector, sec)
         sec_clicks, sec_targets, sec_tips, sec_extras = onePortraitPlotPass(
             data[i], full_dic, CP, merge=args.merge, multiple=i + 1 + nSectors, sector=data.getAxis(0))
         if clicks is None:
@@ -298,7 +326,7 @@ if args.watermark is not None:
         watermark.plot(CP.x)
     CP.x.png(png)
 os.chdir(pth)
-html_filename = os.path.join(args.results_dir, html_template())
+html_filename = os.path.join(args.results_dir, html_template_file())
 share_pth = "js"
 click_plots.write_modal_html(
     html_filename, map_element, share_pth, args.results_dir, modal=args.modal, title=args.title)
