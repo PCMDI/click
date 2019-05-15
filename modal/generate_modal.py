@@ -190,7 +190,7 @@ if args.flip:
     data = MV2.transpose(data)
 if args.normalize is not False:
     if args.normalize == "median":
-        median = genutil.statistics.median(data, axis=1)[0]
+        median = genutil.statistics.median(data, axis=data.ndim-1)[0]
         data, median = genutil.grower(data, median)
         # Loose info on median
         median = median.filled()
