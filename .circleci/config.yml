@@ -103,7 +103,6 @@ jobs:
     steps:
       - checkout
       - run: *setup_miniconda
-      - run: *get_testdata
       - run: *create_conda_env
       - run: *setup
       - run: *run_tests
@@ -126,7 +125,6 @@ jobs:
     steps:
       - checkout
       - run: *setup_miniconda
-      - run: *get_testdata
       - run: *create_conda_env
       - run: *setup
       - run: *run_tests
@@ -149,7 +147,6 @@ jobs:
     steps:
       - checkout
       - run: *setup_miniconda
-      - run: *get_testdata
       - run: *create_conda_env
       - run: *setup
       - run: *run_tests
@@ -174,7 +171,6 @@ jobs:
     steps:
       - checkout
       - run: *setup_miniconda
-      - run: *get_testdata
       - run: *create_conda_env
       - run: *setup
       - run: *run_tests
