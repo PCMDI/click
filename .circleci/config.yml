@@ -71,7 +71,7 @@ aliases:
        export VERSION=1.0
        export LABEL=nightly
        python conda-recipes/prep_for_build.py -l $VERSION
-       conda build $PKG_NAME $CHANNELS
+       conda build $CHANNELS recipe
        anaconda -t $CONDA_UPLOAD_TOKEN upload -u $USER -l $LABEL $CONDA_BLD_PATH/noarch/$PKG_NAME-$VERSION.`date +%Y*`0.tar.bz2 --force
 
   - &run_coveralls
