@@ -171,17 +171,17 @@ jobs:
     steps:
       - checkout
       - run: *setup_miniconda
-      - run: *create_conda_env
-      - run: *setup
-      - run: *run_tests
-      - run: *run_coveralls
+        #- run: *create_conda_env
+        #- run: *setup
+        #- run: *run_tests
+        #- run: *run_coveralls
       - run: *conda_upload
-      - store_artifacts:
-          path: tests_html
-          destination: tests_html
-      - store_artifacts:
-          path: tests_png
-          destination: tests_png
+        #- store_artifacts:
+        #  path: tests_html
+        #  destination: tests_html
+        #- store_artifacts:
+        #  path: tests_png
+        #  destination: tests_png
 
 workflows:
   version: 2
@@ -189,7 +189,7 @@ workflows:
     jobs:
       #- macos_py2
       - linux_py3
-      - macos_py3
-      - linux_py2:
-          requires:
-            - linux_py3
+        #- macos_py3
+        #- linux_py2:
+        # requires:
+        #   - linux_py3
