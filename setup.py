@@ -1,8 +1,6 @@
 from __future__ import print_function
 from setuptools import setup, find_packages
-import glob
 import subprocess
-import os
 
 Version = "0.1.0"
 p = subprocess.Popen(
@@ -47,7 +45,8 @@ scripts = ['modal/generate_modal.py']
 data_files = [
               ('share/click_plots/js', ['share/js/modal.js']),
               ('share/click_plots', ['share/template_top.json',
-              'share/template_bottom.json', 'share/nodata.png', 'share/missing.png'] ),
+              'share/template_bottom.json', 'share/nodata.png',
+              'share/template_one.json', 'share/missing.png'] ),
               ]
 
 setup(name='click_plots',

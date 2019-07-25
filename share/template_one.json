@@ -1,0 +1,437 @@
+{
+ "P": {
+  "click_portraits_one": {
+   "box1": {
+    "line": "default", 
+    "priority": 1, 
+    "x1": 0.2, 
+    "x2": 0.9, 
+    "y1": 0.2, 
+    "y2": 0.8
+   }, 
+   "box2": {
+    "line": "default", 
+    "priority": 0, 
+    "x1": 0.0, 
+    "x2": 0.920000016689, 
+    "y1": 0.300000011921, 
+    "y2": 0.879999995232
+   }, 
+   "box3": {
+    "line": "default", 
+    "priority": 0, 
+    "x1": 0.0, 
+    "x2": 0.910000026226, 
+    "y1": 0.319999992847, 
+    "y2": 0.860000014305
+   }, 
+   "box4": {
+    "line": "default", 
+    "priority": 0, 
+    "x1": 0.0, 
+    "x2": 0.0, 
+    "y1": 0.0, 
+    "y2": 0.0
+   }, 
+   "comment1": {
+    "priority": 1, 
+    "textorientation": "default", 
+    "texttable": "default", 
+    "x": 0.10000000149, 
+    "y": 0.954999983311
+   }, 
+   "comment2": {
+    "priority": 1, 
+    "textorientation": "default", 
+    "texttable": "default", 
+    "x": 0.10000000149, 
+    "y": 0.975000023842
+   }, 
+   "comment3": {
+    "priority": 1, 
+    "textorientation": "default", 
+    "texttable": "default", 
+    "x": 0.10000000149, 
+    "y": 0.995000004768
+   }, 
+   "comment4": {
+    "priority": 1, 
+    "textorientation": "default", 
+    "texttable": "default", 
+    "x": 0.10000000149, 
+    "y": 0.999000012875
+   }, 
+   "crdate": {
+    "priority": 1, 
+    "textorientation": "default", 
+    "texttable": "default", 
+    "x": 0.75, 
+    "y": 0.922999978065
+   }, 
+   "crtime": {
+    "priority": 1, 
+    "textorientation": "default", 
+    "texttable": "default", 
+    "x": 0.850000023842, 
+    "y": 0.922999978065
+   }, 
+   "data": {
+    "priority": 1, 
+    "ratio": -999, 
+    "x1": 0.2, 
+    "x2": 0.9, 
+    "y1": 0.2, 
+    "y2": 0.8
+   }, 
+   "dataname": {
+    "priority": 0, 
+    "textorientation": "default", 
+    "texttable": "default", 
+    "x": 0.0500000007451, 
+    "y": 0.922999978065
+   }, 
+   "file": {
+    "priority": 1, 
+    "textorientation": "default", 
+    "texttable": "default", 
+    "x": 0.0500000007451, 
+    "y": 0.0130000002682
+   }, 
+   "function": {
+    "priority": 1, 
+    "textorientation": "default", 
+    "texttable": "default", 
+    "x": 0.0500000007451, 
+    "y": 0.0130000002682
+   }, 
+   "legend": {
+    "arrow": 0.05, 
+    "line": "default", 
+    "offset": 0.01, 
+    "priority": 1, 
+    "textorientation": "crap22", 
+    "texttable": "default", 
+    "x1": 0.95, 
+    "x2": 0.97, 
+    "y1": 0.17, 
+    "y2": 0.8
+   }, 
+   "line1": {
+    "line": "default", 
+    "priority": 0, 
+    "x1": 0.0500000007451, 
+    "x2": 0.949999988079, 
+    "y1": 0.560000002384, 
+    "y2": 0.560000002384
+   }, 
+   "line2": {
+    "line": "default", 
+    "priority": 0, 
+    "x1": 0.5, 
+    "x2": 0.5, 
+    "y1": 0.259999990463, 
+    "y2": 0.860000014305
+   }, 
+   "line3": {
+    "line": "default", 
+    "priority": 0, 
+    "x1": 0.0, 
+    "x2": 0.899999976158, 
+    "y1": 0.52999997139, 
+    "y2": 0.52999997139
+   }, 
+   "line4": {
+    "line": "default", 
+    "priority": 0, 
+    "x1": 0.0, 
+    "x2": 0.899999976158, 
+    "y1": 0.990000009537, 
+    "y2": 0.990000009537
+   }, 
+   "logicalmask": {
+    "priority": 1, 
+    "textorientation": "default", 
+    "texttable": "default", 
+    "x": 0.0500000007451, 
+    "y": 0.0329999998212
+   }, 
+   "max": {
+    "format": "default", 
+    "priority": 0, 
+    "textorientation": "default", 
+    "texttable": "default", 
+    "x": 0.25, 
+    "y": 0.899999976158
+   }, 
+   "mean": {
+    "format": "default", 
+    "priority": 0, 
+    "textorientation": "default", 
+    "texttable": "default", 
+    "x": 0.0500000007451, 
+    "y": 0.899999976158
+   }, 
+   "min": {
+    "format": "default", 
+    "priority": 0, 
+    "textorientation": "default", 
+    "texttable": "default", 
+    "x": 0.449999988079, 
+    "y": 0.899999976158
+   }, 
+   "orientation": 0, 
+   "source": {
+    "priority": 0, 
+    "textorientation": "default", 
+    "texttable": "default", 
+    "x": 0.0500000007451, 
+    "y": 0.941999971867
+   }, 
+   "title": {
+    "priority": 0, 
+    "textorientation": "default", 
+    "texttable": "default", 
+    "x": 0.15000000596, 
+    "y": 0.922999978065
+   }, 
+   "tname": {
+    "priority": 0, 
+    "textorientation": "default", 
+    "texttable": "default", 
+    "x": 0.0, 
+    "y": 0.995000004768
+   }, 
+   "transformation": {
+    "priority": 1, 
+    "textorientation": "default", 
+    "texttable": "default", 
+    "x": 0.0500000007451, 
+    "y": 0.0529999993742
+   }, 
+   "tunits": {
+    "priority": 0, 
+    "textorientation": "default", 
+    "texttable": "default", 
+    "x": 0.0, 
+    "y": 0.995000004768
+   }, 
+   "tvalue": {
+    "format": "default", 
+    "priority": 0, 
+    "textorientation": "default", 
+    "texttable": "default", 
+    "x": 0.800000011921, 
+    "y": 0.883000016212
+   }, 
+   "units": {
+    "priority": 1, 
+    "textorientation": "default", 
+    "texttable": "default", 
+    "x": 0.670000016689, 
+    "y": 0.922999978065
+   }, 
+   "xlabel1": {
+    "priority": 1, 
+    "textorientation": "__textorientation_401892406424011", 
+    "texttable": "__texttable_492020323210155", 
+    "y": 0.2
+   }, 
+   "xlabel2": {
+    "priority": 0, 
+    "textorientation": "__textorientation_401892406424011", 
+    "texttable": "__texttable_492020323210155", 
+    "y": 0.8
+   }, 
+   "xmintic1": {
+    "line": "default", 
+    "priority": 0, 
+    "y1": 0.259999990463, 
+    "y2": 0.248999999285
+   }, 
+   "xmintic2": {
+    "line": "default", 
+    "priority": 0, 
+    "y1": 0.860000014305, 
+    "y2": 0.868000014305
+   }, 
+   "xname": {
+    "priority": 0, 
+    "textorientation": "defcenter", 
+    "texttable": "default", 
+    "x": 0.5, 
+    "y": 0.8200000000000001
+   }, 
+   "xtic1": {
+    "line": "default", 
+    "priority": 0, 
+    "y1": 0.259999990463, 
+    "y2": 0.24699999392
+   }, 
+   "xtic2": {
+    "line": "default", 
+    "priority": 0, 
+    "y1": 0.860000014305, 
+    "y2": 0.871999979019
+   }, 
+   "xunits": {
+    "priority": 0, 
+    "textorientation": "default", 
+    "texttable": "default", 
+    "x": 0.600000023842, 
+    "y": 0.21
+   }, 
+   "xvalue": {
+    "format": "default", 
+    "priority": 0, 
+    "textorientation": "default", 
+    "texttable": "default", 
+    "x": 0.800000011921, 
+    "y": 0.941999971867
+   }, 
+   "ylabel1": {
+    "priority": 1, 
+    "textorientation": "__textorientation_15235847386176", 
+    "texttable": "__texttable_492020323210155", 
+    "x": 0.2
+   }, 
+   "ylabel2": {
+    "priority": 0, 
+    "textorientation": "__textorientation_15235847386176", 
+    "texttable": "__texttable_492020323210155", 
+    "x": 0.9
+   }, 
+   "ymintic1": {
+    "line": "default", 
+    "priority": 0, 
+    "x1": 0.0500000007451, 
+    "x2": 0.0450000017881
+   }, 
+   "ymintic2": {
+    "line": "default", 
+    "priority": 0, 
+    "x1": 0.949999988079, 
+    "x2": 0.954999983311
+   }, 
+   "yname": {
+    "priority": 0, 
+    "textorientation": "defup", 
+    "texttable": "default", 
+    "x": 0.91, 
+    "y": 0.56
+   }, 
+   "ytic1": {
+    "line": "default", 
+    "priority": 0, 
+    "x1": 0.0500000007451, 
+    "x2": 0.0399999991059
+   }, 
+   "ytic2": {
+    "line": "default", 
+    "priority": 0, 
+    "x1": 0.949999988079, 
+    "x2": 0.959999978542
+   }, 
+   "yunits": {
+    "priority": 0, 
+    "textorientation": "defup", 
+    "texttable": "default", 
+    "x": 0.006, 
+    "y": 0.658999979496
+   }, 
+   "yvalue": {
+    "format": "default", 
+    "priority": 0, 
+    "textorientation": "default", 
+    "texttable": "default", 
+    "x": 0.800000011921, 
+    "y": 0.922999978065
+   }, 
+   "zname": {
+    "priority": 0, 
+    "textorientation": "default", 
+    "texttable": "default", 
+    "x": 0.0, 
+    "y": 0.995000004768
+   }, 
+   "zunits": {
+    "priority": 0, 
+    "textorientation": "default", 
+    "texttable": "default", 
+    "x": 0.0, 
+    "y": 0.995000004768
+   }, 
+   "zvalue": {
+    "format": "default", 
+    "priority": 0, 
+    "textorientation": "default", 
+    "texttable": "default", 
+    "x": 0.800000011921, 
+    "y": 0.902999997139
+   }
+  }
+ }, 
+ "To": {
+  "__textorientation_15235847386176": {
+   "angle": 0, 
+   "halign": 2, 
+   "height": 12, 
+   "path": "right", 
+   "valign": "half"
+  }, 
+  "__textorientation_401892406424011": {
+   "angle": -90, 
+   "halign": 2, 
+   "height": 12, 
+   "path": "right", 
+   "valign": "half"
+  }, 
+  "crap22": {
+   "angle": 0, 
+   "halign": "left", 
+   "height": 12, 
+   "path": "right", 
+   "valign": "half"
+  }
+ }, 
+ "Tt": {
+  "__texttable_492020323210155": {
+   "backgroundcolor": [
+    100.0, 
+    100.0, 
+    100.0, 
+    0.0
+   ], 
+   "backgroundopacity": 0, 
+   "color": [
+    0.0, 
+    0.0, 
+    0.0, 
+    100.0
+   ], 
+   "colormap": null, 
+   "expansion": 100, 
+   "fillincolor": 0, 
+   "font": 1, 
+   "priority": 1, 
+   "projection": "default", 
+   "spacing": 2, 
+   "string": [
+    ""
+   ], 
+   "viewport": [
+    0.0, 
+    1.0, 
+    0.0, 
+    1.0
+   ], 
+   "worldcoordinate": [
+    0.0, 
+    1.0, 
+    0.0, 
+    1.0
+   ], 
+   "x": null, 
+   "y": null
+  }
+ }
+}

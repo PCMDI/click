@@ -21,7 +21,7 @@ def generate_thumbnail(image, size):
             warnings.warn("Could not find pillow module, will use original")
             return image
         img = Image.open(image)
-        img.thumbnail([ int(x) for x in size.split("x")])
+        img.thumbnail([int(x) for x in size.split("x")])
         img.save(thumb, "png")
     return thumb
 
@@ -53,17 +53,6 @@ class ClickablePortrait(Portrait):
         SET.y1 = .2
         SET.y2 = .8
 
-        #va = .01
-        # SET.x1 = 0.05 #  .1
-        # SET.x2 = .85  #.85
-        #SET.y1 = .6 + va
-        #SET.y2 = .9 + va
-
-        # SET.xtic2.y1=P.PLOT_SETTINGS.y1
-        # SET.xtic2.y2=P.PLOT_SETTINGS.y2
-        # SET.ytic2.x1=P.PLOT_SETTINGS.x1
-        # SET.ytic2.x2=P.PLOT_SETTINGS.x2
-
         # Both X (horizontal) and y (VERTICAL) ticks
         # Text table
         SET.tictable = vcs.createtexttable()
@@ -93,12 +82,6 @@ class ClickablePortrait(Portrait):
         # Control color for missing
         SET.missing_color = "light grey"
 
-        # Tics length
-        #SET.xtic1.y1 = SET.y1
-        #SET.xtic1.y2 = SET.y2
-        #SET.ytic1.x1 = SET.x1
-        #SET.ytic1.x2 = SET.x2
-
         # Logo can be a string or an image
         SET.logo = os.path.join(egg_path, "graphics",
                                 "png", "PCMDILogo_300x98px_72dpi.png")
@@ -119,15 +102,10 @@ class ClickablePortrait(Portrait):
         SET.legend.x2 = .97
 
         # level to use
-        SET.levels = [-.7, -.6, -.5, -.4, -.3, -.2, -.1,
-                      0, .1, .2, .3, .4, .5, .6, .7, .8, .9, 1., 1.1, 1.2, 1.3, 1.4, 1.5]
-        SET.levels = [-.5, -.4, -.3, -.2, -.1,
-                      0, .1, .2, .3, .4, .5, .6, .7, .8, .9, 1., 1.1, 1.2, 1.3, 1.4, 1.5]
         SET.levels = [-1.e20, -.5, -.4, -.3, -.2, -.1,
                       0, .1, .2, .3, .4, .5, 1.e20]
 
         # Colormap
-        #SET.colormap = "inferno"
         vcs.scriptrun(os.path.join(egg_path,
                                    "graphics", "vcs", "portraits.scr"))
         SET.colormap = 'bl_rd_12'
@@ -155,11 +133,9 @@ class ClickablePortrait(Portrait):
 
         mesh, template, meshfill = super(ClickablePortrait, self).plot(
             data, template=template, multiple=multiple)
-
         png_file = self.png_template()
         self.x.png(png_file)
 
-        # targets, tips, extras = click_plots.createModalTargets(data, self.targets_template, x_key, y_key, full_dic, merge=merge, sector=sector)
         targets, tips, extras, tips_lbls_x, extras_lbls_x, tips_lbls_y, extras_lbls_y = self.createModalTargets(
             data, full_dic, merge=merge, sector=sector)
         # Creates clickable polygons numpy arrays
@@ -243,7 +219,7 @@ class ClickablePortrait(Portrait):
                                                     self.xlabels_modal_images_template,
                                                     self.ylabels_tooltips_images_template,
                                                     self.ylabels_modal_images_template,
-                            ]:
+                                                    ]:
                                 if template_to_set is not None:
                                     setattr(template_to_set, key,
                                             reverse(inverted, value.strip()))
@@ -254,7 +230,7 @@ class ClickablePortrait(Portrait):
                                         self.xlabels_modal_images_template,
                                         self.ylabels_tooltips_images_template,
                                         self.ylabels_modal_images_template,
-                ]:
+                                        ]:
                     if template_to_set is not None:
                         setattr(template_to_set, y_key,
                                 reverse(inverted, y_value.strip()))
@@ -263,7 +239,8 @@ class ClickablePortrait(Portrait):
                 image = self.ylabels_tooltips_images_template()
                 if os.path.exists(image) and self.thumbnails:
                     image = generate_thumbnail(image, self.thumbnails_size)
-                youts.append(self.ylabels_tooltips_html_template().format(value=y_value, image=image))
+                youts.append(self.ylabels_tooltips_html_template().format(
+                    value=y_value, image=image))
                 yhtml_id = "{}-na-na".format(y_value)
                 y_down = yaxis_list[y_index-1]+"-na-na"
                 if y_index == len(yaxis_list) - 1:
@@ -271,11 +248,11 @@ class ClickablePortrait(Portrait):
                 else:
                     y_up = yaxis_list[y_index+1]+"-na-na"
                 yextras.append("id='{}' data-image='{}' "
-                                "data-yaxisName='{}'"
-                                "data-yaxis='{}' data-yaxisDown='{}' data-yaxisUp='{}' "
-                                .format(yhtml_id, self.ylabels_modal_images_template(),
-                                        y_key,
-                                        y_value, y_down, y_up))
+                               "data-yaxisName='{}'"
+                               "data-yaxis='{}' data-yaxisDown='{}' data-yaxisUp='{}' "
+                               .format(yhtml_id, self.ylabels_modal_images_template(),
+                                       y_key,
+                                       y_value, y_down, y_up))
             else:
                 youts.append("{}".format(y_value))
                 yextras.append("")
@@ -292,7 +269,7 @@ class ClickablePortrait(Portrait):
                                                         self.xlabels_modal_images_template,
                                                         self.ylabels_tooltips_images_template,
                                                         self.ylabels_modal_images_template,
-                                ]:
+                                                        ]:
                                     if template_to_set is not None:
                                         setattr(template_to_set, key,
                                                 reverse(inverted, value.strip()))
@@ -303,7 +280,7 @@ class ClickablePortrait(Portrait):
                                             self.xlabels_modal_images_template,
                                             self.ylabels_tooltips_images_template,
                                             self.ylabels_modal_images_template,
-                    ]:
+                                            ]:
                         if template_to_set is not None:
                             setattr(template_to_set, x_key,
                                     reverse(inverted, x_value.strip()))
@@ -316,15 +293,17 @@ class ClickablePortrait(Portrait):
                     if self.xlabels_tooltips_images_template is not None:
                         image = self.xlabels_tooltips_images_template()
                         if os.path.exists(image) and self.thumbnails:
-                            image = generate_thumbnail(image, self.thumbnails_size)
-                        xouts.append(self.xlabels_tooltips_html_template().format(value=x_value, image=image))
+                            image = generate_thumbnail(
+                                image, self.thumbnails_size)
+                        xouts.append(self.xlabels_tooltips_html_template().format(
+                            value=x_value, image=image))
                         xhtml_id = "{}-na-na".format(x_value)
                         xextras.append("id='{}' data-image='{}' "
-                                        "data-xaxisName='{}'"
-                                        "data-xaxis='{}' data-xaxisLeft='{}' data-xaxisRight='{}' "
-                                        .format(xhtml_id, self.xlabels_modal_images_template(),
-                                                x_key,
-                                                x_value, x_left, x_right))
+                                       "data-xaxisName='{}'"
+                                       "data-xaxis='{}' data-xaxisLeft='{}' data-xaxisRight='{}' "
+                                       .format(xhtml_id, self.xlabels_modal_images_template(),
+                                               x_key,
+                                               x_value, x_left, x_right))
                     else:
                         xouts.append("{}".format(x_value))
                         xextras.append("")
@@ -344,7 +323,8 @@ class ClickablePortrait(Portrait):
                 value = flt[indx]
                 # Each area must know which areas are next to it so the modal can traverse them
                 # We assign an id of the form "x_value-y_value" to each area
-                # We then save neightbor ids in "data-" tags that the javascript will use to traverse by model/variable/etc...
+                # We then save neightbor ids in "data-" tags that the javascript will use
+                # to traverse by model/variable/etc...
                 x_left = xaxis_list[x_index-1]+"-" + \
                     y_value if x_index != 0 else ""
                 x_left += "-{}".format(s_value)
@@ -366,7 +346,8 @@ class ClickablePortrait(Portrait):
                 if numpy.ma.is_masked(value):
                     image = self.nodata_png
                     modal_image = self.nodata_png
-                tips.append(self.cell_tooltips_html_template().format(x_key=x_key, x_value=x_value, y_key=y_key, y_value=y_value, value=value, image=image))
+                tips.append(self.cell_tooltips_html_template().format(
+                    x_key=x_key, x_value=x_value, y_key=y_key, y_value=y_value, value=value, image=image))
                 html_id = "{}-{}-{}".format(x_value, y_value, s_value)
                 extras.append("id='{}' data-value='{}' data-image='{}' "
                               "data-xaxisName='{}' data-yaxisName='{}' data-sectorName='{}' "

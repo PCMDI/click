@@ -26,61 +26,71 @@ web = parser.add_argument_group("web", "Web pages related arguments (modal)")
 
 inpt.add_argument("--data_path", help="input data path")
 inpt.add_argument("--files_glob_pattern",
-                    help="glob pattern to select correct files in input directory")
+                  help="glob pattern to select correct files in input directory")
 inpt.add_argument("--json-preprocessor", help="if sending json files use this script to preprocess",
-                    default=None)
+                  default=None)
 web.add_argument("--title", help="title for plot")
 inpt.add_argument("--bad", help="list of bad models", default=[])
 inpt.add_argument("--normalize",
-                    help="normalize results by statistic", default=False)
-web.add_argument("--modal", help="use a custom modal javascript file", default=None)
+                  help="normalize results by statistic", default=False)
+inpt.add_argument("--normalize_axis",
+                  help="axis over which to normalize results by statistic", default=-1)
+web.add_argument(
+    "--modal", help="use a custom modal javascript file", default=None)
 web.add_argument("--cell_tooltips_html_template", help="html code for tooltip, png image template defined bellow",
                  default="{x_key}: {x_value}<br>{y_key}: {y_value}<br>Value: {value:3g}<div id='thumbnail'><img src='{image}' width=200></div>")
 web.add_argument("--cell_tooltips_images_template",
-                    default="data/plots/Panel6_%(mode)_%(season)_%(model)_%(rip).png",
-                    help="template to find tooltips targets destination")
+                 default="data/plots/Panel6_%(mode)_%(season)_%(model)_%(rip).png",
+                 help="template to find tooltips targets destination")
 web.add_argument("--cell_modal_images_template",
-                    default=True,
-                    help="template to find modal targets destination. If set to `True` then copies tooltip")
+                 default=True,
+                 help="template to find modal targets destination. If set to `True` then copies tooltip")
 web.add_argument("--xlabels_tooltips_html_template",
-                    default="{value}<br><div id='thumbnail'><img src='{image}' width=200></div>",
-                    help="html code for x labels tooltips")
+                 default="{value}<br><div id='thumbnail'><img src='{image}' width=200></div>",
+                 help="html code for x labels tooltips")
 web.add_argument("--xlabels_tooltips_images_template",
-                    default=None,
-                    help="template to find targets destination for x labels")
+                 default=None,
+                 help="template to find targets destination for x labels")
 web.add_argument("--xlabels_modal_images_template",
-                    default=True,
-                    help="template to find modal target destination for x labels. If set to `True` then copies tooltip")
+                 default=True,
+                 help="template to find modal target destination for x labels. If set to `True` then copies tooltip")
 web.add_argument("--ylabels_tooltips_html_template",
-                    default="{value}<br><div id='thumbnail'><img src='{image}' width=200></div>",
-                    help="html code for y labels tooltips")
+                 default="{value}<br><div id='thumbnail'><img src='{image}' width=200></div>",
+                 help="html code for y labels tooltips")
 web.add_argument("--ylabels_tooltips_images_template",
-                    default=None,
-                    help="template to find targets destination for y labels")
+                 default=None,
+                 help="template to find targets destination for y labels")
 web.add_argument("--ylabels_modal_images_template",
-                    default=True,
-                    help="template to find modal targets destination for y labels. If set to `True` then copies tooltip")
+                 default=True,
+                 help="template to find modal targets destination for y labels. If set to `True` then copies tooltip")
+graph.add_argument("--portrait_templates_json_file",
+                   default=None,
+                   help="json file containing vcs templates definitions, template names must be: click_portraits_one/click_portraits_top/click_portraits_bottom")
 graph.add_argument("--flip", action="store_true", default=False)
 graph.add_argument(
     "--names-update", help="a dictionary to update axes labels", default={})
 inpt.add_argument(
     "--merge", help="merge json dimensions together", default=None)
 graph.add_argument("--split", type=int,
-                    help="number of columns after which we split the portrait plot into two rows",
-                    default=20)
-graph.add_argument("--watermark", help="use this image (or text if path is missing) as watermark")
-graph.add_argument("--watermark_font", help="For text watermark use this VCS font",default=1)
-graph.add_argument("--watermark_size", help="For text watermark use this font size",default=100)
-graph.add_argument("--watermark_math", help="For text watermark that need math rendering",action="store_true", default=False)
+                   help="number of columns after which we split the portrait plot into two rows",
+                   default=20)
+graph.add_argument(
+    "--watermark", help="use this image (or text if path is missing) as watermark")
+graph.add_argument("--watermark_font",
+                   help="For text watermark use this VCS font", default=1)
+graph.add_argument("--watermark_size",
+                   help="For text watermark use this font size", default=100)
+graph.add_argument("--watermark_math", help="For text watermark that need math rendering",
+                   action="store_true", default=False)
 graph.add_argument("--watermark_color",
                    help="For text watermark use this font color [r,g,b,opacity]",
                    type=ast.literal_eval,
-                   default=[60,50,50,25])
+                   default=[60, 50, 50, 25])
 outpt.add_argument("--png_template", help="template for portrait plot png file",
-                    default="clickable_portrait.png")
-outpt.add_argument("--png_size",help="png output size", default="800x600")
+                   default="clickable_portrait.png")
+outpt.add_argument("--png_size", help="png output size", default="800x600")
 web.add_argument("--html_template_file", help="template for html output filename",
-                    default="clickable_portrait.html")
+                 default="clickable_portrait.html")
 web.add_argument(
     "--no_target", help="png file to use when target png is missing")
 web.add_argument(
@@ -93,7 +103,8 @@ inpt.add_argument(
     "--sector", help="name of extra variable to use as 'sector' (triangles) in portrait plot")
 graph.add_argument("--levels", help="levels to use for portrait plots")
 graph.add_argument("--colors", help="colors to use for portrait plots")
-graph.add_argument("--colormap", help="colormap to use for portrait plots", default=None)
+graph.add_argument(
+    "--colormap", help="colormap to use for portrait plots", default=None)
 
 # first make sure we do not use --help yet
 yanked_help = False
@@ -158,7 +169,8 @@ for elt in ["cell", "xlabels", "ylabels"]:
         names.append("{}_{}_images_template".format(elt, elt_type))
 for name in names:
     if getattr(args, name) not in [None, True]:
-        exec("{name} = genutil.StringConstructor(args.{name})".format(name=name), globals(), locals())
+        exec("{name} = genutil.StringConstructor(args.{name})".format(
+            name=name), globals(), locals())
     else:
         exec("{name} = args.{name}".format(name=name), globals(), locals())
 if xlabels_modal_images_template is True:
@@ -178,19 +190,33 @@ for k in json_keys:
         dic[k[2:]] = att
         if not isinstance(att, (list, tuple)):
             for name in names:
-                cmd = "if isinstance({name}, genutil.StringConstructor): setattr({name}, k[:2], att)".format(name=name)
+                cmd = "if isinstance({name}, genutil.StringConstructor): setattr({name}, k[:2], att)".format(
+                    name=name)
                 exec(cmd, globals(), locals())
 if args.merge is not None:
     dic["merge"] = args.merge
 
 
+print("DICT:", dic)
 data = J(**dic)(squeeze=1)
+if data.ndim not in [2, 3]:
+    raise RuntimeError(
+        "selection leads to untreatable data shape: {} data after reading must 2D or 3D".format(data.shape))
 
+if args.sector is not None:
+    data = data(order="({})...".format(args.sector))
 if args.flip:
-    data = MV2.transpose(data)
+    if data.ndim == 2:
+        data = MV2.transpose(data)
+    else:  # sectors
+        data = MV2.transpose(data, (0, 2, 1))
 if args.normalize is not False:
     if args.normalize == "median":
-        median = genutil.statistics.median(data, axis=data.ndim-1)[0]
+        if isinstance(args.normalize_axis, int):
+            norm_axis = args.normalize_axis
+        else:
+            norm_axis = "({})".format(args.normalize_axis)
+        median = genutil.statistics.median(data, axis=norm_axis)[0]
         data, median = genutil.grower(data, median)
         # Loose info on median
         median = median.filled()
@@ -208,6 +234,14 @@ if args.normalize is not False:
 # Add extra spaces at the end
 full_dic = args.names_update
 
+# Source default templates
+if args.portrait_templates_json_file is None:
+    vcs.scriptrun(os.path.join(click_egg_path, "template_bottom.json"))
+    vcs.scriptrun(os.path.join(click_egg_path, "template_top.json"))
+    vcs.scriptrun(os.path.join(click_egg_path, "template_one.json"))
+else:
+    vcs.scriptrun(args.portrait_templates_json_file)
+
 
 pth = os.getcwd()
 if not os.path.exists(args.results_dir):
@@ -216,7 +250,7 @@ if not os.path.exists(args.results_dir):
 os.chdir(args.results_dir)
 
 geo = args.png_size.split("x")
-x = vcs.init(bg=True, geometry={"width":int(geo[0]), "height":int(geo[1])})
+x = vcs.init(bg=True, geometry={"width": int(geo[0]), "height": int(geo[1])})
 CP = click_plots.ClickablePortrait(
     x=x, nodata_png=args.no_data, missing_png=args.no_target)
 
@@ -236,12 +270,11 @@ def onePortraitPlotPass(data, full_dic, CP, merge, multiple=1.1, sector=None):
     if nX < args.split:
         clicks, targets, tips, extras = CP.plot(
             data, full_dic, merge=merge,
+            template="click_portraits_one",
             multiple=multiple, sector=sector)
     else:
-        vcs.scriptrun(os.path.join(click_egg_path, "template_bottom.json"))
-        vcs.scriptrun(os.path.join(click_egg_path, "template_top.json"))
         if CP.PLOT_SETTINGS.colormap is None:
-            CP.PLOT_SETTINGS.colormap= "bl_rd_12"
+            CP.PLOT_SETTINGS.colormap = "bl_rd_12"
         if CP.PLOT_SETTINGS.levels is None:
             min, max = vcs.minmax(data)
             if max != 0:
@@ -250,7 +283,8 @@ def onePortraitPlotPass(data, full_dic, CP, merge, multiple=1.1, sector=None):
             CP.PLOT_SETTINGS.levels = levs
             if CP.PLOT_SETTINGS.fillareacolors is None:
                 if CP.PLOT_SETTINGS.colormap == "bl_rd_12":
-                    CP.PLOT_SETTINGS.fillareacolors = vcs.getcolors(levs, list(range(144, 156)), split=1)
+                    CP.PLOT_SETTINGS.fillareacolors = vcs.getcolors(
+                        levs, list(range(144, 156)), split=1)
                 else:
                     CP.PLOT_SETTINGS.fillareacolors = vcs.getcolors(levs)
 
@@ -270,7 +304,6 @@ def onePortraitPlotPass(data, full_dic, CP, merge, multiple=1.1, sector=None):
 
 
 if args.sector is not None:
-    data = data(order="({})...".format(args.sector))
     sectors = data.getAxis(0)
     nSectors = len(sectors) / 10.
     clicks = None

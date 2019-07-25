@@ -1,5 +1,4 @@
 import os
-import numpy.ma
 import shutil
 import vcs
 import pkg_resources
