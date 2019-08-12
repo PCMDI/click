@@ -197,7 +197,6 @@ if args.merge is not None:
     dic["merge"] = args.merge
 
 
-print("DICT:", dic)
 data = J(**dic)(squeeze=1)
 if data.ndim not in [2, 3]:
     raise RuntimeError(
@@ -217,7 +216,6 @@ if args.normalize is not False:
         else:
             norm_axis = args.normalize_axis
         norm_axis = "({})".format(norm_axis)
-        print("NORM AXIS:", norm_axis, data.getAxisList())
         median = genutil.statistics.median(data, axis=norm_axis)[0]
         data, median = genutil.grower(data, median)
         # Loose info on median
