@@ -213,9 +213,11 @@ if args.flip:
 if args.normalize is not False:
     if args.normalize == "median":
         if isinstance(args.normalize_axis, int):
-            norm_axis = args.normalize_axis
+            norm_axis = data.getAxisIds()[args.normalize_axis]
         else:
-            norm_axis = "({})".format(args.normalize_axis)
+            norm_axis = args.normalize_axis
+        norm_axis = "({})".format(norm_axis)
+        print("NORM AXIS:", norm_axis, data.getAxisList())
         median = genutil.statistics.median(data, axis=norm_axis)[0]
         data, median = genutil.grower(data, median)
         # Loose info on median
