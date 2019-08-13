@@ -237,7 +237,7 @@ class ClickablePortrait(Portrait):
             # Taking care of ylabels
             if self.ylabels_tooltips_images_template is not None:
                 image = self.ylabels_tooltips_images_template()
-                if os.path.exists(image) and self.thumbnails:
+                if (image.find("://") != -1 or os.path.exists(image)) and self.thumbnails:
                     image = generate_thumbnail(image, self.thumbnails_size)
                 youts.append(self.ylabels_tooltips_html_template().format(
                     value=y_value, image=image))
@@ -292,7 +292,7 @@ class ClickablePortrait(Portrait):
                         x_right = xaxis_list[x_index+1]+'-na-na'
                     if self.xlabels_tooltips_images_template is not None:
                         image = self.xlabels_tooltips_images_template()
-                        if os.path.exists(image) and self.thumbnails:
+                        if (image.find("://") != -1 or os.path.exists(image)) and self.thumbnails:
                             image = generate_thumbnail(
                                 image, self.thumbnails_size)
                         xouts.append(self.xlabels_tooltips_html_template().format(
@@ -313,12 +313,12 @@ class ClickablePortrait(Portrait):
                 outs.append(fnm_tip)
                 image = outs[-1].replace("html", "png")
                 modal_image = modal_image.replace("html", "png")
-                if not os.path.exists(fnm_tip):
+                if fnm_tip.find("://") == -1 and not os.path.exists(fnm_tip):
                     image = self.missing_png
                 else:
                     if self.thumbnails:
                         image = generate_thumbnail(image, self.thumbnails_size)
-                if not os.path.exists(modal_image):
+                if modal_image.find("://") == -1 and not os.path.exists(modal_image):
                     modal_image = self.missing_png
                 value = flt[indx]
                 # Each area must know which areas are next to it so the modal can traverse them
