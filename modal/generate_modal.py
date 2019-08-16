@@ -46,7 +46,7 @@ web.add_argument("--cell_modal_images_template",
                  default=True,
                  help="template to find modal targets destination. If set to `True` then copies tooltip")
 web.add_argument("--cell_modal_json_template",
-                 default=True,
+                 default="",
                  help="template to find destination. If set to `True` then copies tooltip")
 web.add_argument("--xlabels_tooltips_html_template",
                  default="{value}<br><div id='thumbnail'><img src='{image}' width=200></div>",
