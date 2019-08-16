@@ -83,11 +83,57 @@ $( document ).ready(function() {
     })
 });
 
+
+function jsonPrettyHighlightToId(jsonobj) {
+    
+    var json = JSON.stringify(jsonobj, undefined, 2);
+    
+    json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    json = json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+        var cls = 'color: darkorange;';
+        if (/^"/.test(match)) {
+            if (/:$/.test(match)) {
+                cls = 'color: red;';
+            } else {
+                cls = 'color: green;';
+            }
+        } else if (/true|false/.test(match)) {
+            cls = 'color: blue;';
+        } else if (/null/.test(match)) {
+            cls = 'color: magenta;';
+        }
+        return '<span style="' + cls + '">' + match + '</span>';
+    });
+    
+   return json;
+    
+}
+
+
+function expandJson() {
+    var coll = document.getElementsByClassName("collapsible")
+    var i;
+    console.log("calling expandjson")
+    console.log(coll.length)
+    for (i = 0; i < coll.length; i++) {
+      coll[i].addEventListener("click", function() {
+        this.classList.toggle("active");
+        var content = this.nextElementSibling;
+        if (content.style.display === "block") {
+          content.style.display = "none";
+        } else {
+          content.style.display = "block";
+        }
+      });
+    }
+    
+}
 function populateModal(){
     var container = $('#modal-content')
     var content = getContent(element)
     container.empty()
     container.append(content)
+    expandJson()
 }
 
 function getContent(el){
@@ -164,6 +210,29 @@ function getContent(el){
     if(element.dataset["image"]){
         new_elements.push(
             $("".concat("<img class='full-image' style='margin: 0 auto; width: 100%; max-height: calc(100% - 300px);' src='", el.dataset["image"], "'>"))
+        )
+    }
+    if(element.dataset["json"]){
+        var a
+        $.ajaxSetup({
+            async: false
+        });
+        var myjson = $.getJSON(el.dataset["json"], a, function(data) {a=data})
+        $.ajaxSetup({
+            async: true
+        });
+        //var myjson2 = myjson.done( function(json) {
+        //    console.log(json)
+        //    return json
+        //    }
+        //);
+        //var pretty = JSON.stringify(myjson, undefined, 4)
+        var pretty = jsonPrettyHighlightToId(myjson.responseJSON)
+        console.log(myjson)
+        new_elements.push(
+            $("".concat("<br><button class='collapsible'>JSON File</button>",
+            "<div class='content' style='padding: 0 18px; display: none; overflow: hidden; background-color: #f1f1f1; '>",
+            "<a href='",el.dataset["json"],"'>JSON FILE</a><br>", pretty, "</div>"))
         )
     }
     return new_elements

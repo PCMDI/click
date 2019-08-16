@@ -45,6 +45,9 @@ web.add_argument("--cell_tooltips_images_template",
 web.add_argument("--cell_modal_images_template",
                  default=True,
                  help="template to find modal targets destination. If set to `True` then copies tooltip")
+web.add_argument("--cell_modal_json_template",
+                 default=True,
+                 help="template to find destination. If set to `True` then copies tooltip")
 web.add_argument("--xlabels_tooltips_html_template",
                  default="{value}<br><div id='thumbnail'><img src='{image}' width=200></div>",
                  help="html code for x labels tooltips")
@@ -63,6 +66,14 @@ web.add_argument("--ylabels_tooltips_images_template",
 web.add_argument("--ylabels_modal_images_template",
                  default=True,
                  help="template to find modal targets destination for y labels. If set to `True` then copies tooltip")
+web.add_argument("--web_root", default=None,
+                 help="subsitute `local_root` with this after checking files exists, this allows to post web link to " +
+                 "pictures while still checking pictures are available on disk")
+web.add_argument("--local_root", default=None,
+                 help="subsitute this string with `web_root` argument" +
+                 " in template strings after checking target existence." + 
+                 " this allows to use web link while" +
+                 " still checking that target are available locally")
 graph.add_argument("--portrait_templates_json_file",
                    default=None,
                    help="json file containing vcs templates definitions, template names must be: click_portraits_one/click_portraits_top/click_portraits_bottom")
@@ -92,9 +103,11 @@ outpt.add_argument("--png_size", help="png output size", default="800x600")
 web.add_argument("--html_template_file", help="template for html output filename",
                  default="clickable_portrait.html")
 web.add_argument(
-    "--no_target", help="png file to use when target png is missing")
+    "--no_target", help="png file to use when target png is missing",
+    default = os.path.join(click_egg_path, "share", "missing.png"))
 web.add_argument(
-    "--no_data", help="png file to use when no data is available")
+    "--no_data", help="png file to use when no data is available",
+    default = os.path.join(click_egg_path, "share", "no_data.png"))
 web.add_argument(
     "--thumbnails", help="generate thumbnails images png", action="store_true", default=False)
 web.add_argument(
@@ -167,12 +180,14 @@ for elt in ["cell", "xlabels", "ylabels"]:
     names.append("{}_tooltips_html_template".format(elt))
     for elt_type in ["tooltips", "modal"]:
         names.append("{}_{}_images_template".format(elt, elt_type))
+names.append("cell_modal_json_template")
 for name in names:
     if getattr(args, name) not in [None, True]:
         exec("{name} = genutil.StringConstructor(args.{name})".format(
             name=name), globals(), locals())
     else:
         exec("{name} = args.{name}".format(name=name), globals(), locals())
+print("CELL JSON:", cell_modal_json_template)
 if xlabels_modal_images_template is True:
     xlabels_modal_images_template = xlabels_tooltips_images_template
 if ylabels_modal_images_template is True:
@@ -197,6 +212,7 @@ if args.merge is not None:
     dic["merge"] = args.merge
 
 
+print("AXES:", J.getAxisList())
 data = J(**dic)(squeeze=1)
 if data.ndim not in [2, 3]:
     raise RuntimeError(
@@ -254,9 +270,12 @@ x = vcs.init(bg=True, geometry={"width": int(geo[0]), "height": int(geo[1])})
 CP = click_plots.ClickablePortrait(
     x=x, nodata_png=args.no_data, missing_png=args.no_target)
 
-# tips and modal templatates
+# tips and modal templates
 CP.thumbnails = args.thumbnails
 CP.thumbnails_size = args.thumbnails_size
+# web target paths...
+CP.local_root = args.local_root
+CP.web_root = args.web_root
 for name in names:
     print("SETTING: {} on CP".format(name))
     exec("setattr(CP,'{name}',{name})".format(name=name), globals(), locals())

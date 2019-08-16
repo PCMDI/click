@@ -26,7 +26,8 @@ normalize = "median"
 ### PLOTS
 targets_template = "/work/gleckler1/www/pptest/plots/cmip5/historical/clim/%(variable)/%(variable).%(model)_%(season).png"
 pth = os.getcwd()
-targets_template = os.path.join(pth,"data/plots/peter/%(variable).%(model)_%(season).png")
+#targets_template = os.path.join(pth,"data/plots/peter/%(variable).%(model)_%(season).png")
+cell_tooltips_image_template = "http://crunchy.llnl.gov:5000/%(variable).%(model)_%(season).png"
 #targets_template = "plots/cmip5/historical/%(stat)/%(variable)/%(variable).%(model)_%(season).png"
 # SAMPLE: /work/gleckler1/www/pptest/plots/cmip5/historical/clim/rlut/rlut.IPSL-CM5A-MR_son.png
 

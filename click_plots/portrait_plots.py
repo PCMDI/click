@@ -120,6 +120,20 @@ class ClickablePortrait(Portrait):
         self.missing_png = kargs.get("missing_png", os.path.join(
             click_plots.click_egg_path, "missing.png"))
 
+    def cleanup_image(self, image, thumbnail=False): 
+        if (image.find("://") != -1 or os.path.exists(image)) and thumbnail:
+            image = generate_thumbnail(image, self.thumbnails_size)
+        if image.find("://") == -1 and not os.path.exists(image):
+            image = self.missing_png
+        return self.cleanup(image)
+
+    def cleanup(self, target):
+        if target is None:
+            return
+        if self.web_root is not None and self.local_root is not None:
+            target = target.replace(self.local_root, self.web_root)
+        return target
+
     def plot(self, data, full_dic, merge=None,
              template=None, multiple=1.1,
              sector=None):
@@ -215,6 +229,7 @@ class ClickablePortrait(Portrait):
                         for value, key in zip(values, merger):
                             for template_to_set in [self.cell_tooltips_images_template,
                                                     self.cell_modal_images_template,
+                                                    self.cell_modal_json_template,
                                                     self.xlabels_tooltips_images_template,
                                                     self.xlabels_modal_images_template,
                                                     self.ylabels_tooltips_images_template,
@@ -226,6 +241,7 @@ class ClickablePortrait(Portrait):
             else:
                 for template_to_set in [self.cell_tooltips_images_template,
                                         self.cell_modal_images_template,
+                                        self.cell_modal_json_template,
                                         self.xlabels_tooltips_images_template,
                                         self.xlabels_modal_images_template,
                                         self.ylabels_tooltips_images_template,
@@ -236,11 +252,9 @@ class ClickablePortrait(Portrait):
                                 reverse(inverted, y_value.strip()))
             # Taking care of ylabels
             if self.ylabels_tooltips_images_template is not None:
-                image = self.ylabels_tooltips_images_template()
-                if (image.find("://") != -1 or os.path.exists(image)) and self.thumbnails:
-                    image = generate_thumbnail(image, self.thumbnails_size)
-                youts.append(self.ylabels_tooltips_html_template().format(
-                    value=y_value, image=image))
+                image = self.cleanup_image(self.ylabels_tooltips_images_template(), self.thumbnails)
+                youts.append(self.cleanup(self.ylabels_tooltips_html_template().format(
+                    value=y_value, image=image)))
                 yhtml_id = "{}-na-na".format(y_value)
                 y_down = yaxis_list[y_index-1]+"-na-na"
                 if y_index == len(yaxis_list) - 1:
@@ -250,7 +264,7 @@ class ClickablePortrait(Portrait):
                 yextras.append("id='{}' data-image='{}' "
                                "data-yaxisName='{}'"
                                "data-yaxis='{}' data-yaxisDown='{}' data-yaxisUp='{}' "
-                               .format(yhtml_id, self.ylabels_modal_images_template(),
+                               .format(yhtml_id, self.cleanup_image(self.ylabels_modal_images_template()),
                                        y_key,
                                        y_value, y_down, y_up))
             else:
@@ -265,6 +279,7 @@ class ClickablePortrait(Portrait):
                             for value, key in zip(values, merger):
                                 for template_to_set in [self.cell_tooltips_images_template,
                                                         self.cell_modal_images_template,
+                                                        self.cell_modal_json_template,
                                                         self.xlabels_tooltips_images_template,
                                                         self.xlabels_modal_images_template,
                                                         self.ylabels_tooltips_images_template,
@@ -276,6 +291,7 @@ class ClickablePortrait(Portrait):
                 else:
                     for template_to_set in [self.cell_tooltips_images_template,
                                             self.cell_modal_images_template,
+                                            self.cell_modal_json_template,
                                             self.xlabels_tooltips_images_template,
                                             self.xlabels_modal_images_template,
                                             self.ylabels_tooltips_images_template,
@@ -291,35 +307,26 @@ class ClickablePortrait(Portrait):
                     else:
                         x_right = xaxis_list[x_index+1]+'-na-na'
                     if self.xlabels_tooltips_images_template is not None:
-                        image = self.xlabels_tooltips_images_template()
-                        if (image.find("://") != -1 or os.path.exists(image)) and self.thumbnails:
-                            image = generate_thumbnail(
-                                image, self.thumbnails_size)
-                        xouts.append(self.xlabels_tooltips_html_template().format(
-                            value=x_value, image=image))
+                        image = self.cleanup_image(self.xlabels_tooltips_images_template(), self.thumbnails)
+                        xouts.append(self.cleanup(self.xlabels_tooltips_html_template().format(
+                            value=x_value, image=image)))
                         xhtml_id = "{}-na-na".format(x_value)
                         xextras.append("id='{}' data-image='{}' "
                                        "data-xaxisName='{}'"
                                        "data-xaxis='{}' data-xaxisLeft='{}' data-xaxisRight='{}' "
-                                       .format(xhtml_id, self.xlabels_modal_images_template(),
+                                       .format(xhtml_id, self.cleanup_image(self.xlabels_modal_images_template()),
                                                x_key,
                                                x_value, x_left, x_right))
                     else:
                         xouts.append("{}".format(x_value))
                         xextras.append("")
                 # Here we test if
-                fnm_tip = self.cell_tooltips_images_template()
-                modal_image = self.cell_modal_images_template()
+                fnm_tip = self.cleanup(self.cell_tooltips_images_template())
                 outs.append(fnm_tip)
-                image = outs[-1].replace("html", "png")
-                modal_image = modal_image.replace("html", "png")
-                if fnm_tip.find("://") == -1 and not os.path.exists(fnm_tip):
-                    image = self.missing_png
-                else:
-                    if self.thumbnails:
-                        image = generate_thumbnail(image, self.thumbnails_size)
-                if modal_image.find("://") == -1 and not os.path.exists(modal_image):
-                    modal_image = self.missing_png
+                modal_image = self.cell_modal_images_template()
+                modal_image = self.cleanup_image(modal_image.replace("html", "png"), self.thumbnails)
+                image = self.cell_tooltips_images_template().replace("html", "png")
+                image = self.cleanup_image(image, self.thumbnails)
                 value = flt[indx]
                 # Each area must know which areas are next to it so the modal can traverse them
                 # We assign an id of the form "x_value-y_value" to each area
@@ -346,18 +353,21 @@ class ClickablePortrait(Portrait):
                 if numpy.ma.is_masked(value):
                     image = self.nodata_png
                     modal_image = self.nodata_png
-                tips.append(self.cell_tooltips_html_template().format(
-                    x_key=x_key, x_value=x_value, y_key=y_key, y_value=y_value, value=value, image=image))
+                tips.append(self.cleanup(self.cell_tooltips_html_template().format(
+                    x_key=x_key, x_value=x_value, y_key=y_key, y_value=y_value, value=value, image=image)))
                 html_id = "{}-{}-{}".format(x_value, y_value, s_value)
+                json_pth = self.cleanup(self.cell_modal_json_template())
                 extras.append("id='{}' data-value='{}' data-image='{}' "
                               "data-xaxisName='{}' data-yaxisName='{}' data-sectorName='{}' "
                               "data-xaxis='{}' data-xaxisLeft='{}' data-xaxisRight='{}' "
                               "data-yaxis='{}' data-yaxisDown='{}' data-yaxisUp='{}' "
-                              "data-sector='{}' data-sectorLeft='{}' data-sectorRight='{}'"
+                              "data-sector='{}' data-sectorLeft='{}' data-sectorRight='{}' "
+                              "data-json='{}'"
                               .format(html_id, value, modal_image,
                                       x_key, y_key, s_key,
                                       x_value, x_left, x_right,
                                       y_value, y_down, y_up,
-                                      s_value, s_left, s_right))
+                                      s_value, s_left, s_right,
+                                      json_pth))
                 indx += 1
         return outs, tips, extras, xouts, xextras, youts, yextras
