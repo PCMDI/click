@@ -5,16 +5,22 @@ from flask_cors import CORS
 import os
 
 app = Flask(__name__)
-#CORS(app)
+CORS(app)
 
 
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def index(path):
-    root = "/work/gleckler1/www/pptest/plots/cmip5/historical/clim"
+    root = os.getcwd()
     filename = os.path.join(root, path)
-    return send_file(filename, mimetype='image/png')
+    print("FILNAME:", filename)
+    if filename[-3:] == "png":
+        print("SERVING PNG:", filename)
+        return send_file(filename, mimetype='image/png')
+    else:
+        print("SERVING OTHER:", filename)
+        return send_file(filename)
 
 
 app.run(host="crunchy.llnl.gov", port=5000, debug=True) #, ssl_context='adhoc')
