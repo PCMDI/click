@@ -214,14 +214,12 @@ if args.merge is not None:
     dic["merge"] = args.merge
 
 
-print("AXES (raw JSON):", J.getAxisList())
+print("AXES:", J.getAxisList())
 data = J(**dic)(squeeze=1)
 if data.ndim not in [2, 3]:
     raise RuntimeError(
         "selection leads to untreatable data shape: {} data after reading must 2D or 3D".format(data.shape))
 
-print("data.ndim", data.ndim)
-print("AXES (data):", data.getAxisList())
 if args.sector is not None:
     data = data(order="({})...".format(args.sector))
 if args.flip:
@@ -229,7 +227,6 @@ if args.flip:
         data = MV2.transpose(data)
     else:  # sectors
         data = MV2.transpose(data, (0, 2, 1))
-    print("AXES (data), after flip:", data.getAxisList())
 if args.normalize is not False:
     if args.normalize == "median":
         if isinstance(args.normalize_axis, int):
