@@ -85,13 +85,9 @@ class ClickablePortrait(Portrait):
         # Logo can be a string or an image
         SET.logo = os.path.join(egg_path, "graphics",
                                 "png", "PCMDILogo_500x164px_72dpi.png")
-                                #"png", "PCMDILogo_300x98px_72dpi.png")
         SET.logo.x = .90
         SET.logo.y = .90
-        #SET.logo.x = .93
-        #SET.logo.y = .95
         SET.logo.width = 250 
-        #SET.logo.width = 85
 
         # Timestamp
         SET.time_stamp = vcs.createtext()
