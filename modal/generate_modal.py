@@ -74,6 +74,8 @@ web.add_argument("--local_root", default=None,
                  " in template strings after checking target existence." + 
                  " this allows to use web link while" +
                  " still checking that target are available locally")
+graph.add_argument("--cdat_logo", default=True,
+                   help="Show or hide CDAT logo")
 graph.add_argument("--portrait_templates_json_file",
                    default=None,
                    help="json file containing vcs templates definitions, template names must be: click_portraits_one/click_portraits_top/click_portraits_bottom")
@@ -212,12 +214,14 @@ if args.merge is not None:
     dic["merge"] = args.merge
 
 
-print("AXES:", J.getAxisList())
+print("AXES (raw JSON):", J.getAxisList())
 data = J(**dic)(squeeze=1)
 if data.ndim not in [2, 3]:
     raise RuntimeError(
         "selection leads to untreatable data shape: {} data after reading must 2D or 3D".format(data.shape))
 
+print("data.ndim", data.ndim)
+print("AXES (data):", data.getAxisList())
 if args.sector is not None:
     data = data(order="({})...".format(args.sector))
 if args.flip:
@@ -225,6 +229,7 @@ if args.flip:
         data = MV2.transpose(data)
     else:  # sectors
         data = MV2.transpose(data, (0, 2, 1))
+    print("AXES (data), after flip:", data.getAxisList())
 if args.normalize is not False:
     if args.normalize == "median":
         if isinstance(args.normalize_axis, int):
@@ -267,6 +272,10 @@ os.chdir(args.results_dir)
 
 geo = args.png_size.split("x")
 x = vcs.init(bg=True, geometry={"width": int(geo[0]), "height": int(geo[1])})
+
+if not args.cdat_logo: 
+    x.drawlogooff() # CDAT log on/off
+
 CP = click_plots.ClickablePortrait(
     x=x, nodata_png=args.no_data, missing_png=args.no_target)
 
