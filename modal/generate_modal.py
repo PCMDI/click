@@ -10,9 +10,11 @@ import vcs
 import click_plots
 import ast
 import MV2
-
+import pkg_resources
 
 click_egg_path = click_plots.click_egg_path
+pmp_egg_path = pkg_resources.resource_filename(
+    pkg_resources.Requirement.parse("pcmdi_metrics"), "share/pmp")
 
 parser = pcmdi_metrics.pcmdi.pmp_parser.PMPParser()
 parser.use("--results_dir")
@@ -71,9 +73,14 @@ web.add_argument("--web_root", default=None,
                  "pictures while still checking pictures are available on disk")
 web.add_argument("--local_root", default=None,
                  help="subsitute this string with `web_root` argument" +
-                 " in template strings after checking target existence." + 
+                 " in template strings after checking target existence." +
                  " this allows to use web link while" +
                  " still checking that target are available locally")
+graph.add_argument("--hide_cdat_logo", default=False,
+                   help="Hide CDAT logo", action="store_true")
+graph.add_argument("--custom_logo", default=os.path.join(pmp_egg_path,
+                                                         "graphics", "png", "PCMDILogo_500x164px_72dpi.png"),
+                   help="File to use for custom logo")
 graph.add_argument("--portrait_templates_json_file",
                    default=None,
                    help="json file containing vcs templates definitions, template names must be: click_portraits_one/click_portraits_top/click_portraits_bottom")
@@ -97,6 +104,10 @@ graph.add_argument("--watermark_color",
                    help="For text watermark use this font color [r,g,b,opacity]",
                    type=ast.literal_eval,
                    default=[60, 50, 50, 25])
+graph.add_argument("--reverse_sorted_yaxis", help="sort y axis values in reversed order",
+                   default=False, action="store_true")
+graph.add_argument("--reverse_sorted_xaxis", help="sort x axis values in reversed order",
+                   default=False, action="store_true")
 outpt.add_argument("--png_template", help="template for portrait plot png file",
                    default="clickable_portrait.png")
 outpt.add_argument("--png_size", help="png output size", default="800x600")
@@ -104,10 +115,10 @@ web.add_argument("--html_template_file", help="template for html output filename
                  default="clickable_portrait.html")
 web.add_argument(
     "--no_target", help="png file to use when target png is missing",
-    default = os.path.join(click_egg_path, "share", "missing.png"))
+    default=os.path.join(click_egg_path, "share", "missing.png"))
 web.add_argument(
     "--no_data", help="png file to use when no data is available",
-    default = os.path.join(click_egg_path, "share", "no_data.png"))
+    default=os.path.join(click_egg_path, "share", "no_data.png"))
 web.add_argument(
     "--thumbnails", help="generate thumbnails images png", action="store_true", default=False)
 web.add_argument(
@@ -212,7 +223,6 @@ if args.merge is not None:
     dic["merge"] = args.merge
 
 
-print("AXES:", J.getAxisList())
 data = J(**dic)(squeeze=1)
 if data.ndim not in [2, 3]:
     raise RuntimeError(
@@ -246,9 +256,13 @@ if args.normalize is not False:
         norm = J(**dic)(squeeze=1)
         data /= norm
 
-# prepare axis name for portrait plot
-# Add extra spaces at the end
-full_dic = args.names_update
+# Reverse sort X axis?
+if args.reverse_sorted_xaxis:
+    data = data[..., ::-1]
+
+# Reverse sort Y axis?
+if args.reverse_sorted_yaxis:
+    data = data[..., ::-1, :]
 
 # Source default templates
 if args.portrait_templates_json_file is None:
@@ -267,8 +281,13 @@ os.chdir(args.results_dir)
 
 geo = args.png_size.split("x")
 x = vcs.init(bg=True, geometry={"width": int(geo[0]), "height": int(geo[1])})
+
+if args.hide_cdat_logo:
+    x.drawlogooff()  # CDAT log on/off
+
 CP = click_plots.ClickablePortrait(
-    x=x, nodata_png=args.no_data, missing_png=args.no_target)
+    x=x, nodata_png=args.no_data, missing_png=args.no_target,
+    logo=args.custom_logo)
 
 # tips and modal templates
 CP.thumbnails = args.thumbnails
@@ -282,6 +301,9 @@ for name in names:
 CP.PLOT_SETTINGS.fillareacolors = args.colors
 CP.PLOT_SETTINGS.levels = args.levels
 CP.PLOT_SETTINGS.colormap = args.colormap
+
+# prepare axis name for portrait plot
+full_dic = args.names_update
 
 
 def onePortraitPlotPass(data, full_dic, CP, merge, multiple=1.1, sector=None):
