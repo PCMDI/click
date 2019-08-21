@@ -79,7 +79,7 @@ web.add_argument("--local_root", default=None,
 graph.add_argument("--hide_cdat_logo", default=False,
                    help="Hide CDAT logo", action="store_true")
 graph.add_argument("--custom_logo", default=os.path.join(pmp_egg_path,
-                                                         "graphics", "PCMDILogo_500x164px_72dpi.png"),
+                                                         "graphics", "png", "PCMDILogo_500x164px_72dpi.png"),
                    help="File to use for custom logo")
 graph.add_argument("--portrait_templates_json_file",
                    default=None,
@@ -284,6 +284,8 @@ x = vcs.init(bg=True, geometry={"width": int(geo[0]), "height": int(geo[1])})
 
 if args.hide_cdat_logo:
     x.drawlogooff()  # CDAT log on/off
+
+print("logo:",args.custom_logo)
 
 CP = click_plots.ClickablePortrait(
     x=x, nodata_png=args.no_data, missing_png=args.no_target,
