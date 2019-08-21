@@ -10,9 +10,11 @@ import vcs
 import click_plots
 import ast
 import MV2
-
+import pkg_resources
 
 click_egg_path = click_plots.click_egg_path
+pmp_egg_path = pkg_resources.resource_filename(
+    pkg_resources.Requirement.parse("pcmdi_metrics"), "share/pmp")
 
 parser = pcmdi_metrics.pcmdi.pmp_parser.PMPParser()
 parser.use("--results_dir")
@@ -71,11 +73,14 @@ web.add_argument("--web_root", default=None,
                  "pictures while still checking pictures are available on disk")
 web.add_argument("--local_root", default=None,
                  help="subsitute this string with `web_root` argument" +
-                 " in template strings after checking target existence." + 
+                 " in template strings after checking target existence." +
                  " this allows to use web link while" +
                  " still checking that target are available locally")
-graph.add_argument("--cdat_logo", default=True,
-                   help="Show or hide CDAT logo")
+graph.add_argument("--hide_cdat_logo", default=False,
+                   help="Hide CDAT logo", action="store_true")
+graph.add_argument("--custom_logo", default=os.path.join(pmp_egg_path,
+                                                         "graphics", "PCMDILogo_500x164px_72dpi.png"),
+                   help="File to use for custom logo")
 graph.add_argument("--portrait_templates_json_file",
                    default=None,
                    help="json file containing vcs templates definitions, template names must be: click_portraits_one/click_portraits_top/click_portraits_bottom")
@@ -106,10 +111,10 @@ web.add_argument("--html_template_file", help="template for html output filename
                  default="clickable_portrait.html")
 web.add_argument(
     "--no_target", help="png file to use when target png is missing",
-    default = os.path.join(click_egg_path, "share", "missing.png"))
+    default=os.path.join(click_egg_path, "share", "missing.png"))
 web.add_argument(
     "--no_data", help="png file to use when no data is available",
-    default = os.path.join(click_egg_path, "share", "no_data.png"))
+    default=os.path.join(click_egg_path, "share", "no_data.png"))
 web.add_argument(
     "--thumbnails", help="generate thumbnails images png", action="store_true", default=False)
 web.add_argument(
@@ -270,8 +275,8 @@ os.chdir(args.results_dir)
 geo = args.png_size.split("x")
 x = vcs.init(bg=True, geometry={"width": int(geo[0]), "height": int(geo[1])})
 
-if not args.cdat_logo: 
-    x.drawlogooff() # CDAT log on/off
+if args.hide_cdat_logo:
+    x.drawlogooff()  # CDAT log on/off
 
 CP = click_plots.ClickablePortrait(
     x=x, nodata_png=args.no_data, missing_png=args.no_target)

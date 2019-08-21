@@ -87,7 +87,7 @@ class ClickablePortrait(Portrait):
                                 "png", "PCMDILogo_500x164px_72dpi.png")
         SET.logo.x = .90
         SET.logo.y = .90
-        SET.logo.width = 250 
+        SET.logo.width = 250
 
         # Timestamp
         SET.time_stamp = vcs.createtext()
@@ -120,7 +120,7 @@ class ClickablePortrait(Portrait):
         self.missing_png = kargs.get("missing_png", os.path.join(
             click_plots.click_egg_path, "missing.png"))
 
-    def cleanup_image(self, image, thumbnail=False): 
+    def cleanup_image(self, image, thumbnail=False):
         if (image.find("://") != -1 or os.path.exists(image)) and thumbnail:
             image = generate_thumbnail(image, self.thumbnails_size)
         if image.find("://") == -1 and not os.path.exists(image):
@@ -149,7 +149,6 @@ class ClickablePortrait(Portrait):
             data, template=template, multiple=multiple)
         png_file = self.png_template()
         self.x.png(png_file)
-
 
         targets, tips, extras, tips_lbls_x, extras_lbls_x, tips_lbls_y, extras_lbls_y = self.createModalTargets(
             data, full_dic, merge=merge, sector=sector)
@@ -253,7 +252,8 @@ class ClickablePortrait(Portrait):
                                 reverse(inverted, y_value.strip()))
             # Taking care of ylabels
             if self.ylabels_tooltips_images_template is not None:
-                image = self.cleanup_image(self.ylabels_tooltips_images_template(), self.thumbnails)
+                image = self.cleanup_image(
+                    self.ylabels_tooltips_images_template(), self.thumbnails)
                 youts.append(self.cleanup(self.ylabels_tooltips_html_template().format(
                     value=y_value, image=image)))
                 yhtml_id = "{}-na-na".format(y_value)
@@ -308,7 +308,8 @@ class ClickablePortrait(Portrait):
                     else:
                         x_right = xaxis_list[x_index+1]+'-na-na'
                     if self.xlabels_tooltips_images_template is not None:
-                        image = self.cleanup_image(self.xlabels_tooltips_images_template(), self.thumbnails)
+                        image = self.cleanup_image(
+                            self.xlabels_tooltips_images_template(), self.thumbnails)
                         xouts.append(self.cleanup(self.xlabels_tooltips_html_template().format(
                             value=x_value, image=image)))
                         xhtml_id = "{}-na-na".format(x_value)
@@ -325,7 +326,8 @@ class ClickablePortrait(Portrait):
                 fnm_tip = self.cleanup(self.cell_tooltips_images_template())
                 outs.append(fnm_tip)
                 modal_image = self.cell_modal_images_template()
-                modal_image = self.cleanup_image(modal_image.replace("html", "png"), self.thumbnails)
+                modal_image = self.cleanup_image(
+                    modal_image.replace("html", "png"), self.thumbnails)
                 image = self.cell_tooltips_images_template().replace("html", "png")
                 image = self.cleanup_image(image, self.thumbnails)
                 value = flt[indx]
