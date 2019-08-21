@@ -104,6 +104,10 @@ graph.add_argument("--watermark_color",
                    help="For text watermark use this font color [r,g,b,opacity]",
                    type=ast.literal_eval,
                    default=[60, 50, 50, 25])
+graph.add_argument("--reverse_sorted_yaxis", help="sort y axis values in reversed order",
+                   default=False, action="store_true")
+graph.add_argument("--reverse_sorted_xaxis", help="sort x axis values in reversed order",
+                   default=False, action="store_true")
 outpt.add_argument("--png_template", help="template for portrait plot png file",
                    default="clickable_portrait.png")
 outpt.add_argument("--png_size", help="png output size", default="800x600")
@@ -219,7 +223,6 @@ if args.merge is not None:
     dic["merge"] = args.merge
 
 
-print("AXES:", J.getAxisList())
 data = J(**dic)(squeeze=1)
 if data.ndim not in [2, 3]:
     raise RuntimeError(
@@ -253,9 +256,13 @@ if args.normalize is not False:
         norm = J(**dic)(squeeze=1)
         data /= norm
 
-# prepare axis name for portrait plot
-# Add extra spaces at the end
-full_dic = args.names_update
+# Reverse sort X axis?
+if args.reverse_sorted_xaxis:
+    data = data[..., ::-1]
+
+# Reverse sort Y axis?
+if args.reverse_sorted_yaxis:
+    data = data[..., ::-1, :]
 
 # Source default templates
 if args.portrait_templates_json_file is None:
@@ -279,7 +286,8 @@ if args.hide_cdat_logo:
     x.drawlogooff()  # CDAT log on/off
 
 CP = click_plots.ClickablePortrait(
-    x=x, nodata_png=args.no_data, missing_png=args.no_target)
+    x=x, nodata_png=args.no_data, missing_png=args.no_target,
+    logo=args.custom_logo)
 
 # tips and modal templates
 CP.thumbnails = args.thumbnails
@@ -293,6 +301,9 @@ for name in names:
 CP.PLOT_SETTINGS.fillareacolors = args.colors
 CP.PLOT_SETTINGS.levels = args.levels
 CP.PLOT_SETTINGS.colormap = args.colormap
+
+# prepare axis name for portrait plot
+full_dic = args.names_update
 
 
 def onePortraitPlotPass(data, full_dic, CP, merge, multiple=1.1, sector=None):

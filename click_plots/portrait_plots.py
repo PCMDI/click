@@ -83,8 +83,7 @@ class ClickablePortrait(Portrait):
         SET.missing_color = "light grey"
 
         # Logo can be a string or an image
-        SET.logo = os.path.join(egg_path, "graphics",
-                                "png", "PCMDILogo_500x164px_72dpi.png")
+        SET.logo = kargs["logo"]
         SET.logo.x = .90
         SET.logo.y = .90
         SET.logo.width = 250

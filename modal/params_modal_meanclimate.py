@@ -22,6 +22,10 @@ rip = "r1i1p1"
 # variable= ["rt","pr"]
 # nomalize = {"statistic":"std_xy"}
 normalize = "median"
+#reverse_sorted_xaxis = True
+reverse_sorted_yaxis = True
+hide_cdat_logo = True
+custom_logo = "/git/click/share/nodata.png"
 # merge = [["model", "rip"], ["season","mode"]]
 ### PLOTS
 targets_template = "/work/gleckler1/www/pptest/plots/cmip5/historical/clim/%(variable)/%(variable).%(model)_%(season).png"
