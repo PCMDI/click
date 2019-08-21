@@ -285,8 +285,6 @@ x = vcs.init(bg=True, geometry={"width": int(geo[0]), "height": int(geo[1])})
 if args.hide_cdat_logo:
     x.drawlogooff()  # CDAT log on/off
 
-print("logo:",args.custom_logo)
-
 CP = click_plots.ClickablePortrait(
     x=x, nodata_png=args.no_data, missing_png=args.no_target,
     logo=args.custom_logo)
