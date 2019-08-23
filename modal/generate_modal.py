@@ -369,7 +369,7 @@ else:
 
 # create the html map element
 png = png_template()
-id_image = png_template.split('/')[0].split('.')[0]
+id_image = png_template().split('/')[0].split('.')[0]
 geo = CP.x.geometry()
 map_element = vcs.utils.mapPng(
     png, clicks, targets, tips, extras=extras, width=geo["width"], height=geo["height"], id_image=id_image)
