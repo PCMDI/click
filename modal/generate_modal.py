@@ -369,9 +369,10 @@ else:
 
 # create the html map element
 png = png_template()
+id_image = png_template.split('/')[0].split('.')[0]
 geo = CP.x.geometry()
 map_element = vcs.utils.mapPng(
-    png, clicks, targets, tips, extras=extras, width=geo["width"], height=geo["height"])
+    png, clicks, targets, tips, extras=extras, width=geo["width"], height=geo["height"], id_image=id_image)
 if args.watermark is not None:
     if not os.path.isabs(args.watermark):  # relpath
         watermark_path = os.path.join(pth, args.watermark)
