@@ -76,6 +76,8 @@ web.add_argument("--local_root", default=None,
                  " in template strings after checking target existence." +
                  " this allows to use web link while" +
                  " still checking that target are available locally")
+web.add_argument("--toggle_image", default=False,
+                   help="Enable toggling image", action="store_true")
 graph.add_argument("--hide_cdat_logo", default=False,
                    help="Hide CDAT logo", action="store_true")
 graph.add_argument("--custom_logo", default=os.path.join(pmp_egg_path,
@@ -404,6 +406,7 @@ os.chdir(pth)
 html_filename = os.path.join(args.results_dir, html_template_file())
 share_pth = "js"
 click_plots.write_modal_html(
-    html_filename, map_element, share_pth, args.results_dir, modal=args.modal, title=args.title)
+    html_filename, map_element, share_pth, args.results_dir, modal=args.modal, title=args.title, 
+    toggle_image=args.toggle_image)
 
 print("Generated html at:", html_filename)
