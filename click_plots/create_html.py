@@ -50,7 +50,7 @@ def write_modal_html(html_file, map_element, share_pth, pathout, modal=None, tit
         f.write("</body></head></html>")
 
     if toggle_image:
-        with open(os.path.join(full_share_path, "toggle_image.js") as f:
+        with open(os.path.join(full_share_path, "toggle_image.js"), "w") as f:
             f.write('$(document).ready(function(){')
             f.write('  $("#Color1").click(function(){')
             f.write("      $('#clickable_portrait').attr('src', 'clickable_portrait.png'); });")
