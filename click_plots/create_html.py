@@ -8,7 +8,7 @@ click_egg = pkg_resources.resource_filename(
     pkg_resources.Requirement.parse("click_plots"), "share/click_plots")
 
 
-def write_modal_html(html_file, map_element, share_pth, pathout, modal=None, title="Clickable Portrait Plots"):
+def write_modal_html(html_file, map_element, share_pth, pathout, modal=None, title="Clickable Portrait Plots", toggle_image=False):
     full_share_path = os.path.join(pathout, share_pth)
     if not os.path.exists(full_share_path):
         os.makedirs(full_share_path)
@@ -39,6 +39,20 @@ def write_modal_html(html_file, map_element, share_pth, pathout, modal=None, tit
             '<link rel="stylesheet" type="text/css" href="%s/tooltip.css" />' % share_pth)
         f.write("</head><body>")
         f.write("<h1>{}</h1>".format(title))
+
+        # toggle switch
+        if toggle_image:
+            f.write('<button id="Color1">Color1</button>')
+            f.write('<button id="Color2">Color2</button><br>')
+
         f.write(map_element)
         # f.write("$('area').hover(function(){$(this).css('border','5px');},function(){$(this).css('border','0px');});")
         f.write("</body></head></html>")
+
+    if toggle_image:
+        with open(os.path.join(full_share_path, "toggle_image.js") as f:
+            f.write('$(document).ready(function(){')
+            f.write('  $("#Color1").click(function(){')
+            f.write("      $('#clickable_portrait').attr('src', 'clickable_portrait.png'); });")
+            f.write('  $("#Color2").click(function(){')
+            f.write("      $('#clickable_portrait').attr('src', 'clickable_portrait.png');});});")
