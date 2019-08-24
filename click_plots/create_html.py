@@ -37,6 +37,9 @@ def write_modal_html(html_file, map_element, share_pth, pathout, modal=None, tit
             "<script type='text/javascript' src='%s/cvi_tip_lib.js'></script>" % share_pth)
         f.write(
             '<link rel="stylesheet" type="text/css" href="%s/tooltip.css" />' % share_pth)
+        if toggle_image:
+            f.write(
+                "<script src=src='%s/toggle_image.js'></script>" % share_pth)
         f.write("</head><body>")
         f.write("<h1>{}</h1>".format(title))
 
