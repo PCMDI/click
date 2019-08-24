@@ -54,11 +54,11 @@ def write_modal_html(html_file, map_element, share_pth, pathout, modal=None, tit
 
     if toggle_image:
         with open(os.path.join(full_share_path, "toggle_image.js"), "w") as f:
-            f.write('$(document).ready(function(){')
-            f.write('  $("#Color1").click(function(){')
-            f.write("      $('#clickable_portrait').attr('src', 'clickable_portrait.png');")
-            f.write("  });")
-            f.write('  $("#Color2").click(function(){')
-            f.write("      $('#clickable_portrait').attr('src', 'clickable_portrait_cb.png');")
-            f.write("  });")
+            f.write('$(document).ready(function(){\n')
+            f.write('  $("#Color1").click(function(){\n')
+            f.write("      $('#clickable_portrait').attr('src', 'clickable_portrait.png');\n")
+            f.write("  });\n")
+            f.write('  $("#Color2").click(function(){\n')
+            f.write("      $('#clickable_portrait').attr('src', 'clickable_portrait_cb.png');\n")
+            f.write("  });\n")
             f.write("});")
