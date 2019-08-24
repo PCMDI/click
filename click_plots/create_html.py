@@ -55,4 +55,4 @@ def write_modal_html(html_file, map_element, share_pth, pathout, modal=None, tit
             f.write('  $("#Color1").click(function(){')
             f.write("      $('#clickable_portrait').attr('src', 'clickable_portrait.png'); });")
             f.write('  $("#Color2").click(function(){')
-            f.write("      $('#clickable_portrait').attr('src', 'clickable_portrait.png');});});")
+            f.write("      $('#clickable_portrait').attr('src', 'clickable_portrait_cb.png');});});")
