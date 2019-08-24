@@ -51,7 +51,7 @@ def write_modal_html(html_file, map_element, share_pth, pathout, modal=None, tit
 
         f.write(map_element)
         # f.write("$('area').hover(function(){$(this).css('border','5px');},function(){$(this).css('border','0px');});")
-        f.write("</body></head></html>")
+        f.write("</body></html>")
 
     if toggle_image:
         with open(os.path.join(full_share_path, "toggle_image.js"), "w") as f:
