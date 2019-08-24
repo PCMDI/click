@@ -31,15 +31,16 @@ def write_modal_html(html_file, map_element, share_pth, pathout, modal=None, tit
         f.write('<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>')
         f.write(
             '<script type="text/javascript" src="%s/modal.js"></script>' % share_pth)
-        f.write(
-            "<script type='text/javascript' src='%s/mapper.js'></script>" % share_pth)
+        if not toggle_image:
+            f.write(
+                "<script type='text/javascript' src='%s/mapper.js'></script>" % share_pth)
         f.write(
             "<script type='text/javascript' src='%s/cvi_tip_lib.js'></script>" % share_pth)
         f.write(
             '<link rel="stylesheet" type="text/css" href="%s/tooltip.css" />' % share_pth)
         if toggle_image:
             f.write(
-                "<script src='%s/toggle_image.js'></script>" % share_pth)
+                "<script type='text/javascript' src='%s/toggle_image.js'></script>" % share_pth)
         f.write("</head><body>")
         f.write("<h1>{}</h1>".format(title))
 
