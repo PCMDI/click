@@ -44,7 +44,7 @@ def write_modal_html(html_file, map_element, share_pth, pathout, modal=None, tit
         f.write("</head><body>")
         f.write("<h1>{}</h1>".format(title))
 
-        # toggle switch
+        # toggle image button
         if toggle_image:
             f.write('<button id="Color1">Color1</button>')
             f.write('<button id="Color2">Color2</button><br>')
