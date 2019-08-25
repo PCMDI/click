@@ -23,4 +23,6 @@ def index(path):
         return send_file(filename)
 
 
-app.run(host="crunchy.llnl.gov", port=5000, debug=True) #, ssl_context='adhoc')
+myhost = os.uname()[1]
+
+app.run(host=myhost, port=5000, debug=True) #, ssl_context='adhoc')
