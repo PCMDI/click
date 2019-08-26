@@ -39,5 +39,5 @@ levels = [-1.e20, -.5, -.4, -.3, -.2, -.1, 0, .1, .2, .3, .4, 1.e20]
 #colormap = "viridis"
 
 png_size = "2400x1600"
-toggle_image = ["inferno", "magma", "plasma", "viridis"]
+toggle_image = ["default", "inferno", "magma", "plasma", "viridis"]
 #colormap = "plasma"

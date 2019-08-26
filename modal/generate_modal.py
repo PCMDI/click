@@ -287,9 +287,6 @@ x = vcs.init(bg=True, geometry={"width": int(geo[0]), "height": int(geo[1])})
 # create the html map element
 if args.colormap is not None:
     png_template.colormap = "_" + args.colormap
-    id_image = args.colormap
-else:
-    id_image = 'default'
 
 if args.hide_cdat_logo:
     x.drawlogooff()  # CDAT log on/off
@@ -381,7 +378,7 @@ png = png_template()
 
 geo = CP.x.geometry()
 map_element = vcs.utils.mapPng(
-    png, clicks, targets, tips, extras=extras, width=geo["width"], height=geo["height"], id_image=id_image)
+    png, clicks, targets, tips, extras=extras, width=geo["width"], height=geo["height"], id_image='clickable_portrait')
 if args.watermark is not None:
     if not os.path.isabs(args.watermark):  # relpath
         watermark_path = os.path.join(pth, args.watermark)

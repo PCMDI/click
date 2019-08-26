@@ -47,7 +47,6 @@ def write_modal_html(html_file, map_element, share_pth, pathout, modal=None, tit
 
         # toggle image button
         if toggle_image is not None:
-            f.write('<button id="default">Default</button>')
             for name in toggle_image:
                 f.write('<button id="{0}">{0}</button>'.format(name))
             f.write("<br>")
@@ -60,12 +59,11 @@ def write_modal_html(html_file, map_element, share_pth, pathout, modal=None, tit
         png_template.colormap = ""
         with open(os.path.join(full_share_path, "toggle_image.js"), "w") as f:
             f.write('$(document).ready(function(){\n')
-            f.write('  $("#default").click(function(){\n')
-            print("SOURCE:", png_template())
-            f.write("      $('#clickable_portrait').attr('src', '{}');\n".format(png_template()))
-            f.write("  });\n")
             for name in toggle_image:
-                png_template.colormap = "_" + name
+                if name == "default":
+                    png_template.colormap = ""
+                else:
+                    png_template.colormap = "_" + name
                 print("SOURCES:", png_template())
                 f.write('  $("#{}").click(function(){{\n'.format(name))
                 f.write("      $('#clickable_portrait').attr('src', '{}');\n".format(png_template()))
