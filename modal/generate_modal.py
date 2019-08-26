@@ -77,7 +77,7 @@ web.add_argument("--local_root", default=None,
                  " this allows to use web link while" +
                  " still checking that target are available locally")
 web.add_argument("--toggle_image", default=None,
-                 help="List of alternate images to use", nargs="*")
+                 help="List of alternate colormap to use", nargs="*")
 graph.add_argument("--hide_cdat_logo", default=False,
                    help="Hide CDAT logo", action="store_true")
 graph.add_argument("--custom_logo", default=os.path.join(pmp_egg_path,
@@ -111,7 +111,7 @@ graph.add_argument("--reverse_sorted_yaxis", help="sort y axis values in reverse
 graph.add_argument("--reverse_sorted_xaxis", help="sort x axis values in reversed order",
                    default=False, action="store_true")
 outpt.add_argument("--png_template", help="template for portrait plot png file",
-                   default="clickable_portrait%(colormap).png")
+                   default="clickable_portrait_%(colormap).png")
 outpt.add_argument("--png_size", help="png output size", default="800x600")
 web.add_argument("--html_template_file", help="template for html output filename",
                  default="clickable_portrait.html")
