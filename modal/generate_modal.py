@@ -111,7 +111,7 @@ graph.add_argument("--reverse_sorted_yaxis", help="sort y axis values in reverse
 graph.add_argument("--reverse_sorted_xaxis", help="sort x axis values in reversed order",
                    default=False, action="store_true")
 outpt.add_argument("--png_template", help="template for portrait plot png file",
-                   default="clickable_portrait_%(colormap).png")
+                   default="clickable_portrait%(colormap).png")
 outpt.add_argument("--png_size", help="png output size", default="800x600")
 web.add_argument("--html_template_file", help="template for html output filename",
                  default="clickable_portrait.html")
