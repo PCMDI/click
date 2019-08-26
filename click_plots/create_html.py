@@ -66,18 +66,3 @@ def write_modal_html(html_file, map_element, share_pth, pathout, modal=None, tit
         f.write(map_element)
         # f.write("$('area').hover(function(){$(this).css('border','5px');},function(){$(this).css('border','0px');});")
         f.write("</body></html>")
-
-    """if toggle_image is not None:
-        png_template.colormap = ""
-        with open(os.path.join(full_share_path, "toggle_image.js"), "w") as f:
-            f.write('$(document).ready(function(){\n')
-            for name in toggle_image:
-                if name == "default":
-                    png_template.colormap = ""
-                else:
-                    png_template.colormap = "_" + name
-                print("SOURCES:", png_template())
-                f.write('  $("#{}").click(function(){{\n'.format(name))
-                f.write("      document.getElementById('clickable_portrait').attr('src', '{}');\n".format(png_template()))
-                f.write("  });\n")
-            f.write("});")"""
