@@ -53,13 +53,14 @@ def write_modal_html(html_file, map_element, share_pth, pathout, modal=None, tit
         f.write("<h1>{}</h1>".format(title))
 
         # toggle image button
+        f.write("Colormaps: ")
         if toggle_image is not None:
             for name in toggle_image:
                 if name == "default":
                     png_template.colormap = ""
                 else:
                     png_template.colormap = "_" + name
-                f.write('Colormaps: <button onclick="changeColormap(\'{0}\')" id="{1}">{1}</button>'.format(png_template(),name))
+                f.write('<button onclick="changeColormap(\'{0}\')" id="{1}">{1}</button>'.format(png_template(),name))
             f.write("<br>")
 
         f.write(map_element)
