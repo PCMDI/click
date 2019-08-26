@@ -59,7 +59,7 @@ def write_modal_html(html_file, map_element, share_pth, pathout, modal=None, tit
                     png_template.colormap = ""
                 else:
                     png_template.colormap = "_" + name
-                f.write('<button onclick="changeColormap(\'{0}\')" id="{1}">{1}</button>'.format(png_template(),name))
+                f.write('Colormaps: <button onclick="changeColormap(\'{0}\')" id="{1}">{1}</button>'.format(png_template(),name))
             f.write("<br>")
 
         f.write(map_element)
