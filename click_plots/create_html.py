@@ -3,12 +3,13 @@ import shutil
 import vcs
 import pkg_resources
 import warnings
+import genutil
 
 click_egg = pkg_resources.resource_filename(
     pkg_resources.Requirement.parse("click_plots"), "share/click_plots")
 
 
-def write_modal_html(html_file, map_element, share_pth, pathout, modal=None, title="Clickable Portrait Plots", toggle_image=False):
+def write_modal_html(html_file, map_element, share_pth, pathout, modal=None, title="Clickable Portrait Plots", toggle_image=None, png_template=genutil.StringConstructor("clickable_portraits%(colormap).png")):
     full_share_path = os.path.join(pathout, share_pth)
     if not os.path.exists(full_share_path):
         os.makedirs(full_share_path)
@@ -31,7 +32,7 @@ def write_modal_html(html_file, map_element, share_pth, pathout, modal=None, tit
         f.write('<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>')
         f.write(
             '<script type="text/javascript" src="%s/modal.js"></script>' % share_pth)
-        if toggle_image:
+        if toggle_image is not None:
             f.write(
                 "<script type='text/javascript' src='%s/toggle_image.js'></script>" % share_pth)
         else:
@@ -45,21 +46,28 @@ def write_modal_html(html_file, map_element, share_pth, pathout, modal=None, tit
         f.write("<h1>{}</h1>".format(title))
 
         # toggle image button
-        if toggle_image:
-            f.write('<button id="Color1">Color1</button>')
-            f.write('<button id="Color2">Color2</button><br>')
+        if toggle_image is not None:
+            f.write('<button id="default">Default</button>')
+            for name in toggle_image:
+                f.write('<button id="{0}">{0}</button>'.format(name))
+            f.write("<br>")
 
         f.write(map_element)
         # f.write("$('area').hover(function(){$(this).css('border','5px');},function(){$(this).css('border','0px');});")
         f.write("</body></html>")
 
-    if toggle_image:
+    if toggle_image is not None:
+        png_template.colormap = ""
         with open(os.path.join(full_share_path, "toggle_image.js"), "w") as f:
             f.write('$(document).ready(function(){\n')
-            f.write('  $("#Color1").click(function(){\n')
-            f.write("      $('#clickable_portrait').attr('src', 'clickable_portrait.png');\n")
+            f.write('  $("#default").click(function(){\n')
+            print("SOURCE:", png_template())
+            f.write("      $('#clickable_portrait').attr('src', '{}');\n".format(png_template()))
             f.write("  });\n")
-            f.write('  $("#Color2").click(function(){\n')
-            f.write("      $('#clickable_portrait').attr('src', 'clickable_portrait_cb.png');\n")
-            f.write("  });\n")
+            for name in toggle_image:
+                png_template.colormap = "_" + name
+                print("SOURCES:", png_template())
+                f.write('  $("#{}").click(function(){{\n'.format(name))
+                f.write("      $('#clickable_portrait').attr('src', '{}');\n".format(png_template()))
+                f.write("  });\n")
             f.write("});")
