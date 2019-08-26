@@ -15,6 +15,7 @@ def write_modal_html(html_file, map_element, share_pth, pathout, modal=None, tit
         os.makedirs(full_share_path)
     for file in ["mapper.js", "cvi_tip_lib.js", "tooltip.css"]:
         shutil.copy2(os.path.join(vcs.vcs_egg_path, file), full_share_path)
+    shutil.copy(os.path.join(click_egg,"js","toggle_image.js"), full_share_path)
     if modal is not None:
         if not os.path.exists(modal):
             warnings.warn(
@@ -35,27 +36,37 @@ def write_modal_html(html_file, map_element, share_pth, pathout, modal=None, tit
         if toggle_image is not None:
             f.write(
                 "<script type='text/javascript' src='%s/toggle_image.js'></script>" % share_pth)
-        else:
-            f.write(
+        f.write(
                 "<script type='text/javascript' src='%s/mapper.js'></script>" % share_pth)
         f.write(
             "<script type='text/javascript' src='%s/cvi_tip_lib.js'></script>" % share_pth)
         f.write(
             '<link rel="stylesheet" type="text/css" href="%s/tooltip.css" />' % share_pth)
+        f.write('<script type="text/javascript">')
+        f.write('<!--')
+        f.write('window.onload=function() {')
+        f.write('    toggle_image.add(document.getElementById("wrapper"),options);')
+        f.write('};')
+        f.write('-->')
+        f.write('</script>')
         f.write("</head><body>")
         f.write("<h1>{}</h1>".format(title))
 
         # toggle image button
         if toggle_image is not None:
             for name in toggle_image:
-                f.write('<button id="{0}">{0}</button>'.format(name))
+                if name == "default":
+                    png_template.colormap = ""
+                else:
+                    png_template.colormap = "_" + name
+                f.write('<button onclick="changeColormap(\'{0}\')" id="{1}">{1}</button>'.format(png_template(),name))
             f.write("<br>")
 
         f.write(map_element)
         # f.write("$('area').hover(function(){$(this).css('border','5px');},function(){$(this).css('border','0px');});")
         f.write("</body></html>")
 
-    if toggle_image is not None:
+    """if toggle_image is not None:
         png_template.colormap = ""
         with open(os.path.join(full_share_path, "toggle_image.js"), "w") as f:
             f.write('$(document).ready(function(){\n')
@@ -66,6 +77,6 @@ def write_modal_html(html_file, map_element, share_pth, pathout, modal=None, tit
                     png_template.colormap = "_" + name
                 print("SOURCES:", png_template())
                 f.write('  $("#{}").click(function(){{\n'.format(name))
-                f.write("      $('#clickable_portrait').attr('src', '{}');\n".format(png_template()))
+                f.write("      document.getElementById('clickable_portrait').attr('src', '{}');\n".format(png_template()))
                 f.write("  });\n")
-            f.write("});")
+            f.write("});")"""
