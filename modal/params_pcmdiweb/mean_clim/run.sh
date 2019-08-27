@@ -3,7 +3,6 @@
 # - grim: pmp_nightly_20190628
 
 
-#generate_modal.py -p params_modal_meanclimate.py --colormap='viridis' --png_template='clickable_portrait_cb.png'
 generate_modal.py -p params_modal_meanclimate.py --colormap='bl_to_darkred'
 generate_modal.py -p params_modal_meanclimate.py --colormap='viridis'
 
