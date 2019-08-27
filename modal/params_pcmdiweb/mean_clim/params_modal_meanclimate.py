@@ -111,4 +111,5 @@ if flip:
 else:
     ylabels_tooltips_images_template = "../taylor_diagram/v20190821/%(variable)_cmip5_historical_taylor_4panel_all_global.png"
 
-toggle_image = True
+#toggle_image = True
+toggle_image = ['bl_to_darkred', 'viridis']
