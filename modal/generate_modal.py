@@ -76,6 +76,8 @@ web.add_argument("--local_root", default=None,
                  " in template strings after checking target existence." +
                  " this allows to use web link while" +
                  " still checking that target are available locally")
+web.add_argument("--toggle_image", default=None,
+                 help="List of alternate colormap to use", nargs="*")
 graph.add_argument("--hide_cdat_logo", default=False,
                    help="Hide CDAT logo", action="store_true")
 graph.add_argument("--custom_logo", default=os.path.join(pmp_egg_path,
@@ -109,7 +111,7 @@ graph.add_argument("--reverse_sorted_yaxis", help="sort y axis values in reverse
 graph.add_argument("--reverse_sorted_xaxis", help="sort x axis values in reversed order",
                    default=False, action="store_true")
 outpt.add_argument("--png_template", help="template for portrait plot png file",
-                   default="clickable_portrait.png")
+                   default="clickable_portrait%(colormap).png")
 outpt.add_argument("--png_size", help="png output size", default="800x600")
 web.add_argument("--html_template_file", help="template for html output filename",
                  default="clickable_portrait.html")
@@ -282,6 +284,10 @@ os.chdir(args.results_dir)
 geo = args.png_size.split("x")
 x = vcs.init(bg=True, geometry={"width": int(geo[0]), "height": int(geo[1])})
 
+# create the html map element
+if args.colormap is not None:
+    png_template.colormap = "_" + args.colormap
+
 if args.hide_cdat_logo:
     x.drawlogooff()  # CDAT log on/off
 
@@ -367,11 +373,12 @@ else:
         data, full_dic, CP, merge=args.merge)
 
 
-# create the html map element
+
 png = png_template()
+
 geo = CP.x.geometry()
 map_element = vcs.utils.mapPng(
-    png, clicks, targets, tips, extras=extras, width=geo["width"], height=geo["height"])
+    png, clicks, targets, tips, extras=extras, width=geo["width"], height=geo["height"], id_image='clickable_portrait')
 if args.watermark is not None:
     if not os.path.isabs(args.watermark):  # relpath
         watermark_path = os.path.join(pth, args.watermark)
@@ -403,6 +410,7 @@ os.chdir(pth)
 html_filename = os.path.join(args.results_dir, html_template_file())
 share_pth = "js"
 click_plots.write_modal_html(
-    html_filename, map_element, share_pth, args.results_dir, modal=args.modal, title=args.title)
+    html_filename, map_element, share_pth, args.results_dir, modal=args.modal, title=args.title,
+    toggle_image=args.toggle_image, png_template=png_template)
 
 print("Generated html at:", html_filename)
