@@ -113,8 +113,6 @@ function jsonPrettyHighlightToId(jsonobj) {
 function expandJson() {
     var coll = document.getElementsByClassName("collapsible")
     var i;
-    console.log("calling expandjson")
-    console.log(coll.length)
     for (i = 0; i < coll.length; i++) {
       coll[i].addEventListener("click", function() {
         this.classList.toggle("active");
@@ -221,16 +219,9 @@ function getContent(el){
         $.ajaxSetup({
             async: true
         });
-        //var myjson2 = myjson.done( function(json) {
-        //    console.log(json)
-        //    return json
-        //    }
-        //);
-        //var pretty = JSON.stringify(myjson, undefined, 4)
         var pretty = jsonPrettyHighlightToId(myjson.responseJSON)
-        console.log(myjson)
         new_elements.push(
-            $("".concat("<br><button class='collapsible'>JSON File</button>",
+            $("".concat("<br><button class='collapsible'>Provenance and Additional Statistics</button>",
             "<div class='content' style='padding: 0 18px; display: none; overflow: hidden; background-color: #f1f1f1; '>",
             "<a href='",el.dataset["json"],"'>JSON FILE</a><br>", pretty, "</div>"))
         )
