@@ -144,6 +144,8 @@ class ClickablePortrait(Portrait):
         # It DOES modify the data axes
         self.decorate(data, yax, xax)
 
+        tmp_template = vcs.gettemplate(template)
+        tmp_template.xlabel2.list()
         mesh, template, meshfill = super(ClickablePortrait, self).plot(
             data, template=template, multiple=multiple)
         png_file = self.png_template()
@@ -154,17 +156,27 @@ class ClickablePortrait(Portrait):
         # Creates clickable polygons numpy arrays
         click_areas = vcs.utils.meshToPngCoords(mesh, template, [
             meshfill.datawc_x1, meshfill.datawc_x2, meshfill.datawc_y1, meshfill.datawc_y2], png=png_file)
-        click_labels_x = vcs.utils.axisToPngCoords([], meshfill, template, 'x1', [
+        click_labels_x1 = vcs.utils.axisToPngCoords([], meshfill, template, 'x1', [
             meshfill.datawc_x1, meshfill.datawc_x2, meshfill.datawc_y1, meshfill.datawc_y2], png=png_file)
-        click_labels_y = vcs.utils.axisToPngCoords([], meshfill, template, 'y1', [
+        click_labels_y1 = vcs.utils.axisToPngCoords([], meshfill, template, 'y1', [
+            meshfill.datawc_x1, meshfill.datawc_x2, meshfill.datawc_y1, meshfill.datawc_y2], png=png_file)
+        click_labels_x2 = vcs.utils.axisToPngCoords([], meshfill, template, 'x2', [
+            meshfill.datawc_x1, meshfill.datawc_x2, meshfill.datawc_y1, meshfill.datawc_y2], png=png_file)
+        click_labels_y2 = vcs.utils.axisToPngCoords([], meshfill, template, 'y2', [
             meshfill.datawc_x1, meshfill.datawc_x2, meshfill.datawc_y1, meshfill.datawc_y2], png=png_file)
 
         targets_lbls_x = [
-            meshfill.xticlabels1[k] for k in sorted(meshfill.xticlabels1)]
+            meshfill.xticlabels1[k] for k in sorted(meshfill.xticlabels1)] 
         targets_lbls_y = [
             meshfill.yticlabels1[k] for k in sorted(meshfill.yticlabels1)]
+        targets_lbls_x += [
+            meshfill.xticlabels2[k] for k in sorted(meshfill.xticlabels2)] 
+        targets_lbls_y += [
+            meshfill.yticlabels2[k] for k in sorted(meshfill.yticlabels2)]
         # when using multiple we have different shapes so we need to "extend"
-        if click_areas.shape[-1] > click_labels_x.shape[-1]:
+        click_labels_x = numpy.concatenate((click_labels_x1, click_labels_x2))
+        click_labels_y = numpy.concatenate((click_labels_y1, click_labels_y2))
+        if click_areas.shape[-1] > click_labels_x1.shape[-1]:
             # ok more vertices in click area
             click_labels_x = add_extra_vertices(click_labels_x)
             click_labels_y = add_extra_vertices(click_labels_y)
@@ -175,9 +187,10 @@ class ClickablePortrait(Portrait):
         clicks = numpy.concatenate(
             (click_areas, click_labels_x, click_labels_y))
         targets = numpy.concatenate((targets, targets_lbls_x, targets_lbls_y))
-        tips = numpy.concatenate((tips, tips_lbls_x, tips_lbls_y))
-        extras = numpy.concatenate((extras, extras_lbls_x, extras_lbls_y))
+        tips = numpy.concatenate((tips, tips_lbls_x, tips_lbls_x, tips_lbls_y, tips_lbls_y))
+        extras = numpy.concatenate((extras, extras_lbls_x, extras_lbls_x, extras_lbls_y, extras_lbls_y))
 
+        print("SHAPED OUT:", clicks.shape, targets.shape, tips.shape, extras.shape)
         return clicks, targets, tips, extras
 
     def createModalTargets(self, data, update_names, merge=None, sector=None):
