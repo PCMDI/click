@@ -148,36 +148,58 @@ class ClickablePortrait(Portrait):
             data, template=template, multiple=multiple)
         png_file = self.png_template()
         self.x.png(png_file)
-
         targets, tips, extras, tips_lbls_x, extras_lbls_x, tips_lbls_y, extras_lbls_y = self.createModalTargets(
             data, full_dic, merge=merge, sector=sector)
         # Creates clickable polygons numpy arrays
         click_areas = vcs.utils.meshToPngCoords(mesh, template, [
             meshfill.datawc_x1, meshfill.datawc_x2, meshfill.datawc_y1, meshfill.datawc_y2], png=png_file)
-        click_labels_x = vcs.utils.axisToPngCoords([], meshfill, template, 'x1', [
+        click_labels_x1 = vcs.utils.axisToPngCoords([], meshfill, template, 'x1', [
             meshfill.datawc_x1, meshfill.datawc_x2, meshfill.datawc_y1, meshfill.datawc_y2], png=png_file)
-        click_labels_y = vcs.utils.axisToPngCoords([], meshfill, template, 'y1', [
+        click_labels_x2 = vcs.utils.axisToPngCoords([], meshfill, template, 'x2', [
             meshfill.datawc_x1, meshfill.datawc_x2, meshfill.datawc_y1, meshfill.datawc_y2], png=png_file)
-
+        click_labels_x = numpy.concatenate((click_labels_x1, click_labels_x2))
         targets_lbls_x = [
-            meshfill.xticlabels1[k] for k in sorted(meshfill.xticlabels1)]
-        targets_lbls_y = [
-            meshfill.yticlabels1[k] for k in sorted(meshfill.yticlabels1)]
+            meshfill.xticlabels1[k] for k in sorted(meshfill.xticlabels1)] 
+        targets_lbls_x += [
+            meshfill.xticlabels2[k] for k in sorted(meshfill.xticlabels2)] 
+        if self.ylabels_tooltips_images_template is not None:
+            click_labels_y1 = vcs.utils.axisToPngCoords([], meshfill, template, 'y1', [
+                meshfill.datawc_x1, meshfill.datawc_x2, meshfill.datawc_y1, meshfill.datawc_y2], png=png_file)
+            click_labels_y2 = vcs.utils.axisToPngCoords([], meshfill, template, 'y2', [
+                meshfill.datawc_x1, meshfill.datawc_x2, meshfill.datawc_y1, meshfill.datawc_y2], png=png_file)
+            targets_lbls_y += [
+                meshfill.yticlabels2[k] for k in sorted(meshfill.yticlabels2)]
+            targets_lbls_y = [
+                meshfill.yticlabels1[k] for k in sorted(meshfill.yticlabels1)]
+            click_labels_y = numpy.concatenate((click_labels_y1, click_labels_y2))
+
         # when using multiple we have different shapes so we need to "extend"
         if click_areas.shape[-1] > click_labels_x.shape[-1]:
             # ok more vertices in click area
             click_labels_x = add_extra_vertices(click_labels_x)
-            click_labels_y = add_extra_vertices(click_labels_y)
         elif click_areas.shape[-1] < click_labels_x.shape[-1]:
             # ok less vertices in click area
             click_areas = add_extra_vertices(click_areas)
+        if self.ylabels_tooltips_images_template is not None:
+            if click_areas.shape[-1] > click_labels_1.shape[-1]:
+                click_labels_y = add_extra_vertices(click_labels_y)
+            elif click_areas.shape[-1] < click_labels_y.shape[-1]:
+                # ok less vertices in click area
+                click_areas = add_extra_vertices(click_areas)
 
-        clicks = numpy.concatenate(
-            (click_areas, click_labels_x, click_labels_y))
-        targets = numpy.concatenate((targets, targets_lbls_x, targets_lbls_y))
-        tips = numpy.concatenate((tips, tips_lbls_x, tips_lbls_y))
-        extras = numpy.concatenate((extras, extras_lbls_x, extras_lbls_y))
+        clicks = click_areas
+        if self.xlabels_tooltips_images_template is not None:
+            clicks = numpy.concatenate((clicks, click_labels_x))
+            targets = numpy.concatenate((targets, targets_lbls_x))
+            tips = numpy.concatenate((tips, tips_lbls_x, tips_lbls_x))
+            extras = numpy.concatenate((extras, extras_lbls_x, extras_lbls_x))
+        if self.ylabels_tooltips_images_template is not None:
+            clicks = numpy.concatenate((clicks, click_labels_y))
+            targets = numpy.concatenate((targets, targets_lbls_x))
+            tips = numpy.concatenate((tips, tips_lbls_y, tips_lbls_y))
+            extras = numpy.concatenate((extras, extras_lbls_y, extras_lbls_y))
 
+        print("OUT:", clicks.shape, targets.shape, tips.shape, extras.shape)
         return clicks, targets, tips, extras
 
     def createModalTargets(self, data, update_names, merge=None, sector=None):
