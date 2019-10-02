@@ -83,6 +83,12 @@ graph.add_argument("--hide_cdat_logo", default=False,
 graph.add_argument("--custom_logo", default=os.path.join(pmp_egg_path,
                                                          "graphics", "png", "PCMDILogo_500x164px_72dpi.png"),
                    help="File to use for custom logo")
+graph.add_argument("--custom_logo_x",
+                   default=0.9,
+                   help="x location of logo on plot as ratio, default=0.9")
+graph.add_argument("--custom_logo_y",
+                   default=0.9,
+                   help="y location of logo on plot as ratio, default=0.9")
 graph.add_argument("--portrait_templates_json_file",
                    default=None,
                    help="json file containing vcs templates definitions, template names must be: click_portraits_one/click_portraits_top/click_portraits_bottom")
@@ -106,6 +112,8 @@ graph.add_argument("--watermark_color",
                    help="For text watermark use this font color [r,g,b,opacity]",
                    type=ast.literal_eval,
                    default=[60, 50, 50, 25])
+graph.add_argument("--time_stamp",
+                   default=False, help="turn on time stamp on plot")
 graph.add_argument("--reverse_sorted_yaxis", help="sort y axis values in reversed order",
                    default=False, action="store_true")
 graph.add_argument("--reverse_sorted_xaxis", help="sort x axis values in reversed order",
@@ -293,7 +301,10 @@ if args.hide_cdat_logo:
 
 CP = click_plots.ClickablePortrait(
     x=x, nodata_png=args.no_data, missing_png=args.no_target,
-    logo=args.custom_logo)
+    logo=args.custom_logo,
+    logo_x=args.custom_logo_x,
+    logo_y=args.custom_logo_y,
+    time_stamp=args.time_stamp)
 
 # tips and modal templates
 CP.thumbnails = args.thumbnails

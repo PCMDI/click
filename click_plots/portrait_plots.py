@@ -84,18 +84,22 @@ class ClickablePortrait(Portrait):
 
         # Logo can be a string or an image
         SET.logo = kargs["logo"]
-        SET.logo.x = .90
-        SET.logo.y = .90
+        SET.logo.x = kargs["logo_x"]
+        SET.logo.y = kargs["logo_y"]
+        #SET.logo.x = .90
+        #SET.logo.y = .90
         SET.logo.width = 250
 
         # Timestamp
-        SET.time_stamp = vcs.createtext()
-        SET.time_stamp.color = "blue"
-        SET.time_stamp.y = [.9]
-        SET.time_stamp.x = [.98]
-        SET.time_stamp.halign = "right"
-        # or we can turn it off
-        SET.time_stamp = None
+        if kargs["time_stamp"]:
+            SET.time_stamp = vcs.createtext()
+            SET.time_stamp.color = "black"
+            SET.time_stamp.y = [.9]
+            SET.time_stamp.x = [.98]
+            SET.time_stamp.halign = "right"
+        else:
+            # or we can turn it off
+            SET.time_stamp = None
 
         SET.legend.x1 = .95
         SET.legend.x2 = .97
