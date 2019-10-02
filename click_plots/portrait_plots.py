@@ -1,4 +1,5 @@
 from pcmdi_metrics.graphics.portraits import Portrait
+import datetime
 import vcs
 import click_plots
 import numpy
@@ -93,6 +94,7 @@ class ClickablePortrait(Portrait):
         # Timestamp
         if kargs["time_stamp"]:
             SET.time_stamp = vcs.createtext()
+            SET.time_stamp.string = "{:v%Y%m%d}".format(datetime.datetime.now())
             SET.time_stamp.color = "black"
             SET.time_stamp.y = [.9]
             SET.time_stamp.x = [.98]
