@@ -14,30 +14,43 @@ import os
 import vcs
 
 #==============================================================================
-# User option
+# User options
 #------------------------------------------------------------------------------
-mip = 'cmip5'
-exp = 'historical'
+#mip = "cmip5"
+mip = "cmip6"
+exp = "historical"
 
-watermark_on = False
-flip = True  # draw plot in vertical (portrait)
-#flip = False  # draw plot in horizontal (landscape)
+if mip == "cmip5" and exp == "historical":
+ json_ver = "v20190821"
+ graphic_ver = "v20190828"
+ td1_ver = "v20190821"
+ td2_ver = "v20190821" 
+
+if mip == "cmip6" and exp == "historical":
+ json_ver = "v20190930"  #"v20190927" #v20190919"
+ graphic_ver = "v20190930" #"v20190919"
+ td1_ver = "v20191001"
+ td2_ver = "v20191001"
+
+
+watermark_on = True #False
+flip = True  # draw plot in vertical (portrait). If False plot in horizontal (landscape)
 
 debug = False
 #debug = True
 case_id = "{:v%Y%m%d}".format(datetime.datetime.now())
-pmprdir = "/p/user_pub/pmp/pmp_results/pmp_v1.1.2/pcmdiweb/interactive_portrait/mean_clim"
+pmprdir = "/p/user_pub/pmp/pmp_results/pmp_v1.1.2/interactive_plot/portrait_plot/mean_clim"
 
 #==============================================================================
 # JSON FILES
 #------------------------------------------------------------------------------
-data_path = "/p/user_pub/pmp/pmp_results/pmp_v1.1.2/metrics_results/mean_climate/CMIP5/historical/v20190821"
+data_path = "/p/user_pub/pmp/pmp_results/pmp_v1.1.2/metrics_results/mean_climate/" + mip.upper() + "/" + exp + "/" + json_ver + "/"
 files_glob_pattern = "*regrid2*.json"
 
 #==============================================================================
 # DATA
 #------------------------------------------------------------------------------
-statistic = 'rms_xy' 
+statistic = "rms_xy" 
 sector = "season"
 season = ["djf", "son", "jja", "mam"]
 reference = "default"
@@ -57,15 +70,10 @@ if debug:
 results_dir = os.path.join(
     pmprdir, mip, exp, case_id)
 
-if flip:
-    results_dir += '_vertical'
-else:
-    results_dir += '_horizontal'
-
 #==============================================================================
 # PLOTS
 #------------------------------------------------------------------------------
-title = 'Seasonal Errors (' + statistic + '): ' + mip.upper() +' ('+exp.title()+'), '+region.title()
+title = "Seasonal Errors (" + statistic + "): " + mip.upper() +" ("+exp.title()+"), "+region.title()
 
 # Color map customization 
 levels = [-1.e20, -.5, -.4, -.3, -.2, -.1, 0, .1, .2, .3, .4, .5, 1.e20]
@@ -85,31 +93,34 @@ else:
 
 # Logo
 hide_cdat_logo = True
+custom_logo_y = 0.95  # move pcmdi logo upward to avoid overlapping with x-axis on top
 
 # Sort top to bottom in alphabetical order
 reverse_sorted_yaxis = True
 
+# time stamp
+time_stamp = True
+
 # Watermark
-if watermark_on:
+if watermark_on and mip == "cmip6":
     watermark = "PCMDI Metrics Package\n Preliminary Results"
-    watermark_color = [0,0,0,30]
-    watermark_size = 80
+    watermark_color = [0,0,0,20]
+    watermark_size = 40 # 80
 
 #==============================================================================
 # Interactivity
 #------------------------------------------------------------------------------
-cell_tooltips_images_template = "../../../../../../graphics/mean_climate/cmip5/historical/clim/v20171129/%(variable)/%(variable).%(model)_%(season).png"
-#cell_tooltips_images_template = "../../../../../../graphics/mean_climate/cmip5/historical/clim/v20190716/%(variable)/%(variable).%(model)_%(season).png"
-cell_modal_json_template = "../../../../../../metrics_results/mean_climate/CMIP5/historical/v20190821/%(variable)/%(model).%(variable).CMIP5.historical.regrid2.2p5x2p5.v20190821.json"
+cell_tooltips_images_template = "../../../../../../graphics/mean_climate/" + mip + "/" + exp + "/clim/" + graphic_ver + "/%(variable)/%(variable).%(model)_%(season).png"
+cell_modal_json_template = "../../../../../../metrics_results/mean_climate/" + mip.upper() + "/" + exp + "/" + json_ver + "/%(variable)/%(model).%(variable)." + mip.upper() + "." + exp + ".regrid2.2p5x2p5."+json_ver+".json"
 
-no_target = "missing.png"
-no_data = "nodata.png"
+no_target = "../missing.png"
+no_data = "../nodata.png"
 
 # tooltop for axis label
 if flip:
-    xlabels_tooltips_images_template = "../taylor_diagram/v20190821/%(variable)_cmip5_historical_taylor_4panel_all_global.png"
+    xlabels_tooltips_images_template = "../../../taylor_diagram/" + mip + "/" + exp + "/" + td1_ver + "/%(variable)_"+mip+"_"+exp+"_taylor_4panel_all_global.png"
 else:
-    ylabels_tooltips_images_template = "../taylor_diagram/v20190821/%(variable)_cmip5_historical_taylor_4panel_all_global.png"
+    ylabels_tooltips_images_template = "../../../taylor_diagram/" + mip + "/" + exp + "/" + td2_ver + "/%(variable)_"+mip+"_"+exp+"_taylor_4panel_all_global.png"
 
-# swith between multiple colormaps
-toggle_image = ['bl_to_darkred', 'viridis']
+#toggle_image = True
+toggle_image = ["bl_to_darkred", "viridis"]
