@@ -406,6 +406,7 @@ if args.triangle_indicator is not None:
     triangle_indicator.x = args.triangle_indicator_x
     triangle_indicator.y = args.triangle_indicator_y
     triangle_indicator.plot(CP.x)
+    CP.x.png(png)
 
 
 if args.watermark is not None:
