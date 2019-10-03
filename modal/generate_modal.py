@@ -81,8 +81,28 @@ web.add_argument("--toggle_image", default=None,
 graph.add_argument("--hide_cdat_logo", default=False,
                    help="Hide CDAT logo", action="store_true")
 graph.add_argument("--custom_logo", default=os.path.join(pmp_egg_path,
-                                                         "graphics", "png", "PCMDILogo_500x164px_72dpi.png"),
+                                                         "graphics", "png", "PCMDILogo_300x98px_72dpi.png"),
                    help="File to use for custom logo")
+graph.add_argument("--custom_logo_x",
+                   default=0.9,
+                   help="x location of logo on plot as ratio, default=0.9")
+graph.add_argument("--custom_logo_y",
+                   default=0.9,
+                   help="y location of logo on plot as ratio, default=0.9")
+graph.add_argument("--custom_logo_width",
+                   default=300,
+                   help="width in pixel for logo")
+graph.add_argument("--triangle_indicator", default=None, 
+                   help="path for triangle_indicator image")
+graph.add_argument("--triangle_indicator_x",
+                   default=0.1,
+                   help="x location of triangle_indicator on plot as ratio")
+graph.add_argument("--triangle_indicator_y",
+                   default=0.9,
+                   help="y location of triangle_indicator on plot as ratio")
+graph.add_argument("--triangle_indicator_width",
+                   default=150,
+                   help="width in pixel for triangle_indicator")
 graph.add_argument("--portrait_templates_json_file",
                    default=None,
                    help="json file containing vcs templates definitions, template names must be: click_portraits_one/click_portraits_top/click_portraits_bottom")
@@ -106,6 +126,8 @@ graph.add_argument("--watermark_color",
                    help="For text watermark use this font color [r,g,b,opacity]",
                    type=ast.literal_eval,
                    default=[60, 50, 50, 25])
+graph.add_argument("--time_stamp",
+                   default=False, help="turn on time stamp on plot")
 graph.add_argument("--reverse_sorted_yaxis", help="sort y axis values in reversed order",
                    default=False, action="store_true")
 graph.add_argument("--reverse_sorted_xaxis", help="sort x axis values in reversed order",
@@ -293,7 +315,11 @@ if args.hide_cdat_logo:
 
 CP = click_plots.ClickablePortrait(
     x=x, nodata_png=args.no_data, missing_png=args.no_target,
-    logo=args.custom_logo)
+    logo=args.custom_logo,
+    logo_x=args.custom_logo_x,
+    logo_y=args.custom_logo_y,
+    logo_width=args.custom_logo_width,
+    time_stamp=args.time_stamp)
 
 # tips and modal templates
 CP.thumbnails = args.thumbnails
@@ -379,6 +405,17 @@ png = png_template()
 geo = CP.x.geometry()
 map_element = vcs.utils.mapPng(
     png, clicks, targets, tips, extras=extras, width=geo["width"], height=geo["height"], id_image='clickable_portrait')
+
+if args.triangle_indicator is not None:
+    triangle_indicator_path = args.triangle_indicator
+    width = args.triangle_indicator_width 
+    triangle_indicator = vcs.utils.Logo(triangle_indicator_path, width=width)
+    triangle_indicator.x = args.triangle_indicator_x
+    triangle_indicator.y = args.triangle_indicator_y
+    triangle_indicator.plot(CP.x)
+    CP.x.png(png)
+
+
 if args.watermark is not None:
     if not os.path.isabs(args.watermark):  # relpath
         watermark_path = os.path.join(pth, args.watermark)
