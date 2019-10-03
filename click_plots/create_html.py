@@ -9,7 +9,7 @@ click_egg = pkg_resources.resource_filename(
     pkg_resources.Requirement.parse("click_plots"), "share/click_plots")
 
 
-def write_modal_html(html_file, map_element, share_pth, pathout, modal=None, title="Clickable Portrait Plots", toggle_image=None, png_template=genutil.StringConstructor("clickable_portraits%(colormap).png")):
+def write_modal_html(html_file, map_element, share_pth, pathout, modal=None, title="Clickable Portrait Plots", toggle_image=None, png_template=genutil.StringConstructor("clickable_portraits%(colormap).png"), description=None):
     full_share_path = os.path.join(pathout, share_pth)
     if not os.path.exists(full_share_path):
         os.makedirs(full_share_path)
@@ -52,8 +52,14 @@ def write_modal_html(html_file, map_element, share_pth, pathout, modal=None, tit
         f.write("</head><body>")
         f.write("<h1>{}</h1>".format(title))
 
+        # description
+        if description is not None:
+            f.write("<style>p.description {margin-left: 25px;}</style>")
+            f.write("<p class=description>"+description+"</p>")
+
         # toggle image button
-        f.write("Colormaps: ")
+        f.write("<style>p.button {margin-left: 25px;}</style>")
+        f.write("<p class=button>Colormaps: ")
         if toggle_image is not None:
             for name in toggle_image:
                 if name == "default":
@@ -61,7 +67,7 @@ def write_modal_html(html_file, map_element, share_pth, pathout, modal=None, tit
                 else:
                     png_template.colormap = "_" + name
                 f.write('<button onclick="changeColormap(\'{0}\')" id="{1}">{1}</button>'.format(png_template(),name))
-            f.write("<br>")
+            f.write("<br></p>")
 
         f.write(map_element)
         # f.write("$('area').hover(function(){$(this).css('border','5px');},function(){$(this).css('border','0px');});")

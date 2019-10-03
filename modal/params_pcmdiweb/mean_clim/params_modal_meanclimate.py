@@ -16,8 +16,8 @@ import vcs
 #==============================================================================
 # User options
 #------------------------------------------------------------------------------
-mip = "cmip5"
-#mip = "cmip6"
+#mip = "cmip5"
+mip = "cmip6"
 exp = "historical"
 
 if mip == "cmip5" and exp == "historical":
@@ -123,6 +123,7 @@ cell_modal_json_template = "../../../../../../metrics_results/mean_climate/" + m
 
 no_target = "../missing.png"
 no_data = "../nodata.png"
+#no_data_json = "../nodata.json"
 
 # tooltop for axis label
 if flip:
@@ -132,3 +133,6 @@ else:
 
 #toggle_image = True
 toggle_image = ["bl_to_darkred", "viridis"]
+
+# description
+description_html = "<b>Hover mouse over x-axis labels and click on a variable to see Taylor Diagrams.   Hover mouse over a triangle and click to see maps from which the statistics were derived.<br><font color=red>Prototype:  With the current version, please do NOT click on </font><font color=grey>GREY boxes </font><font color=red>(missing data), otherwise you will need to <A HREF='javascript:history.go(0)'>refresh</A> the browser.</font></b>"

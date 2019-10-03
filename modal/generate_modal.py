@@ -78,6 +78,8 @@ web.add_argument("--local_root", default=None,
                  " still checking that target are available locally")
 web.add_argument("--toggle_image", default=None,
                  help="List of alternate colormap to use", nargs="*")
+web.add_argument("--description_html", default=None,
+                 help="Few lines of text for detailed description at top of the html page, if needed")
 graph.add_argument("--hide_cdat_logo", default=False,
                    help="Hide CDAT logo", action="store_true")
 graph.add_argument("--custom_logo", default=os.path.join(pmp_egg_path,
@@ -448,6 +450,6 @@ html_filename = os.path.join(args.results_dir, html_template_file())
 share_pth = "js"
 click_plots.write_modal_html(
     html_filename, map_element, share_pth, args.results_dir, modal=args.modal, title=args.title,
-    toggle_image=args.toggle_image, png_template=png_template)
+    toggle_image=args.toggle_image, png_template=png_template, description=args.description_html)
 
 print("Generated html at:", html_filename)
