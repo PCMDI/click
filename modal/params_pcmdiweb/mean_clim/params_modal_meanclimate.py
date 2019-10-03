@@ -16,8 +16,8 @@ import vcs
 #==============================================================================
 # User options
 #------------------------------------------------------------------------------
-#mip = "cmip5"
-mip = "cmip6"
+mip = "cmip5"
+#mip = "cmip6"
 exp = "historical"
 
 if mip == "cmip5" and exp == "historical":
@@ -93,13 +93,21 @@ else:
 
 # Logo
 hide_cdat_logo = True
-custom_logo_y = 0.95  # move pcmdi logo upward to avoid overlapping with x-axis on top
+custom_logo_x = 0.15  # move pcmdi logo to left 
+custom_logo_y = 0.95  # move pcmdi logo to top (further upward to avoid overlapping with x-axis label on top)
+#custom_logo_width = 250
 
 # Sort top to bottom in alphabetical order
 reverse_sorted_yaxis = True
 
 # time stamp
 time_stamp = True
+
+# triangle indicator
+triangle_indicator = "/export_backup/lee1043/git/click_20190930/click/share/Seasons4.png"
+triangle_indicator_x = 0.93
+triangle_indicator_y = 0.89
+triangle_indicator_width = 120
 
 # Watermark
 if watermark_on and mip == "cmip6":

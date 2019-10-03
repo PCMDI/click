@@ -87,15 +87,13 @@ class ClickablePortrait(Portrait):
         SET.logo = kargs["logo"]
         SET.logo.x = kargs["logo_x"]
         SET.logo.y = kargs["logo_y"]
-        #SET.logo.x = .90
-        #SET.logo.y = .90
-        SET.logo.width = 250
+        SET.logo.width = kargs["logo_width"]
 
         # Timestamp
         if kargs["time_stamp"]:
             SET.time_stamp = vcs.createtext()
-            SET.time_stamp.color = "black"
-            SET.time_stamp.y = [.9]
+            SET.time_stamp.color = "darkblue"
+            SET.time_stamp.y = [.95]
             SET.time_stamp.x = [.98]
             SET.time_stamp.halign = "right"
         else:

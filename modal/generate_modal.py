@@ -81,7 +81,7 @@ web.add_argument("--toggle_image", default=None,
 graph.add_argument("--hide_cdat_logo", default=False,
                    help="Hide CDAT logo", action="store_true")
 graph.add_argument("--custom_logo", default=os.path.join(pmp_egg_path,
-                                                         "graphics", "png", "PCMDILogo_500x164px_72dpi.png"),
+                                                         "graphics", "png", "PCMDILogo_300x98px_72dpi.png"),
                    help="File to use for custom logo")
 graph.add_argument("--custom_logo_x",
                    default=0.9,
@@ -89,6 +89,9 @@ graph.add_argument("--custom_logo_x",
 graph.add_argument("--custom_logo_y",
                    default=0.9,
                    help="y location of logo on plot as ratio, default=0.9")
+graph.add_argument("--custom_logo_width",
+                   default=300,
+                   help="width in pixel for logo")
 graph.add_argument("--triangle_indicator", default=None, 
                    help="path for triangle_indicator image")
 graph.add_argument("--triangle_indicator_x",
@@ -97,6 +100,9 @@ graph.add_argument("--triangle_indicator_x",
 graph.add_argument("--triangle_indicator_y",
                    default=0.9,
                    help="y location of triangle_indicator on plot as ratio")
+graph.add_argument("--triangle_indicator_width",
+                   default=150,
+                   help="width in pixel for triangle_indicator")
 graph.add_argument("--portrait_templates_json_file",
                    default=None,
                    help="json file containing vcs templates definitions, template names must be: click_portraits_one/click_portraits_top/click_portraits_bottom")
@@ -312,6 +318,7 @@ CP = click_plots.ClickablePortrait(
     logo=args.custom_logo,
     logo_x=args.custom_logo_x,
     logo_y=args.custom_logo_y,
+    logo_width=args.custom_logo_width,
     time_stamp=args.time_stamp)
 
 # tips and modal templates
@@ -401,7 +408,7 @@ map_element = vcs.utils.mapPng(
 
 if args.triangle_indicator is not None:
     triangle_indicator_path = args.triangle_indicator
-    width = 150
+    width = args.triangle_indicator_width 
     triangle_indicator = vcs.utils.Logo(triangle_indicator_path, width=width)
     triangle_indicator.x = args.triangle_indicator_x
     triangle_indicator.y = args.triangle_indicator_y
