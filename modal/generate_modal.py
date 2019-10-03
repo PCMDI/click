@@ -89,6 +89,14 @@ graph.add_argument("--custom_logo_x",
 graph.add_argument("--custom_logo_y",
                    default=0.9,
                    help="y location of logo on plot as ratio, default=0.9")
+graph.add_argument("--triangle_indicator", default=None, 
+                   help="path for triangle_indicator image")
+graph.add_argument("--triangle_indicator_x",
+                   default=0.1,
+                   help="x location of triangle_indicator on plot as ratio")
+graph.add_argument("--triangle_indicator_y",
+                   default=0.9,
+                   help="y location of triangle_indicator on plot as ratio")
 graph.add_argument("--portrait_templates_json_file",
                    default=None,
                    help="json file containing vcs templates definitions, template names must be: click_portraits_one/click_portraits_top/click_portraits_bottom")
@@ -390,6 +398,16 @@ png = png_template()
 geo = CP.x.geometry()
 map_element = vcs.utils.mapPng(
     png, clicks, targets, tips, extras=extras, width=geo["width"], height=geo["height"], id_image='clickable_portrait')
+
+if args.triangle_indicator is not None:
+    triangle_indicator_path = args.triangle_indicator
+    width = 150
+    triangle_indicator = vcs.utils.Logo(triangle_indicator_path, width=width)
+    triangle_indicator.x = args.triangle_indicator_x
+    triangle_indicator.y = args.triangle_indicator_y
+    triangle_indicator.plot(CP.x)
+
+
 if args.watermark is not None:
     if not os.path.isabs(args.watermark):  # relpath
         watermark_path = os.path.join(pth, args.watermark)
