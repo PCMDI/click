@@ -117,6 +117,8 @@ class ClickablePortrait(Portrait):
 
         # colors to use
         # SET.fillareacolors = vcs.getcolors(SET.levels)
+        self.nodata_json = kargs.get("nodata_json", os.path.join(
+            click_plots.click_egg_path, "nodata.json"))
         self.nodata_png = kargs.get("nodata_png", os.path.join(
             click_plots.click_egg_path, "nodata.png"))
         self.missing_png = kargs.get("missing_png", os.path.join(
@@ -384,6 +386,8 @@ class ClickablePortrait(Portrait):
                     x_key=x_key, x_value=x_value, y_key=y_key, y_value=y_value, value=value, image=image)))
                 html_id = "{}-{}-{}".format(x_value, y_value, s_value)
                 json_pth = self.cleanup(self.cell_modal_json_template())
+                if not os.path.isfile(json_pth):
+                    json_pth = self.nodata_json
                 extras.append("id='{}' data-value='{}' data-image='{}' "
                               "data-xaxisName='{}' data-yaxisName='{}' data-sectorName='{}' "
                               "data-xaxis='{}' data-xaxisLeft='{}' data-xaxisRight='{}' "

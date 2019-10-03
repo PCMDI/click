@@ -144,6 +144,9 @@ web.add_argument(
     "--no_data", help="png file to use when no data is available",
     default=os.path.join(click_egg_path, "share", "no_data.png"))
 web.add_argument(
+    "--no_data_json", help="json file to use when no data is available",
+    default=os.path.join(click_egg_path, "share", "no_data.json"))
+web.add_argument(
     "--thumbnails", help="generate thumbnails images png", action="store_true", default=False)
 web.add_argument(
     "--thumbnails_size", help="size to generate thumbnails images png", default="150x150")
@@ -314,7 +317,7 @@ if args.hide_cdat_logo:
     x.drawlogooff()  # CDAT log on/off
 
 CP = click_plots.ClickablePortrait(
-    x=x, nodata_png=args.no_data, missing_png=args.no_target,
+    x=x, nodata_png=args.no_data, missing_png=args.no_target, nodata_json=args.no_data_json,
     logo=args.custom_logo,
     logo_x=args.custom_logo_x,
     logo_y=args.custom_logo_y,
