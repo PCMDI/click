@@ -123,7 +123,6 @@ cell_modal_json_template = "../../../../../../metrics_results/mean_climate/" + m
 
 no_target = "../missing.png"
 no_data = "../nodata.png"
-#no_data_json = "../nodata.json"
 
 # tooltop for axis label
 if flip:
