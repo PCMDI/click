@@ -238,7 +238,7 @@
    }, 
    "xlabel2": {
     "priority": 1, 
-    "textorientation": "__textorientation_401892406424011", 
+    "textorientation": "__xlabel2text", 
     "texttable": "__texttable_492020323210155", 
     "y": 0.85
    }, 
@@ -385,6 +385,13 @@
    "path": "right", 
    "valign": "half"
   }, 
+  "__xlabel2text": {
+   "angle": 90,
+   "halign": 2,
+   "height": 12,
+   "path": "right",
+   "valign": "half"
+  },
   "crap22": {
    "angle": 0, 
    "halign": "left", 

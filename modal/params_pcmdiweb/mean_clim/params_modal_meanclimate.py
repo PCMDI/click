@@ -22,15 +22,15 @@ exp = "historical"
 
 if mip == "cmip5" and exp == "historical":
  json_ver = "v20190821"
- graphic_ver = "v20190828"
- td1_ver = "v20190821"
- td2_ver = "v20190821" 
+ graphic_ver = "v20191009"
+ td1_ver = "v20191009"
+ td2_ver = "v20191009" 
 
 if mip == "cmip6" and exp == "historical":
  json_ver = "v20190930"  #"v20190927" #v20190919"
- graphic_ver = "v20190930" #"v20190919"
- td1_ver = "v20191001"
- td2_ver = "v20191001"
+ graphic_ver = "v20191010" #"v20190919"
+ td1_ver = "v20191009"
+ td2_ver = "v20191009"
 
 
 watermark_on = True #False
@@ -110,7 +110,7 @@ triangle_indicator_y = 0.89
 triangle_indicator_width = 120
 
 # Watermark
-if watermark_on and mip == "cmip6":
+if watermark_on:
     watermark = "PCMDI Metrics Package\n Preliminary Results"
     watermark_color = [0,0,0,20]
     watermark_size = 40 # 80
@@ -118,11 +118,12 @@ if watermark_on and mip == "cmip6":
 #==============================================================================
 # Interactivity
 #------------------------------------------------------------------------------
-cell_tooltips_images_template = "../../../../../../graphics/mean_climate/" + mip + "/" + exp + "/clim/" + graphic_ver + "/%(variable)/%(variable).%(model)_%(season).png"
+cell_tooltips_images_template = "../../../../../../graphics/mean_climate/" + mip + "/" + exp + "/clim/" + graphic_ver + "/%(variable)/%(variable)_"+mip+"_"+exp+"_%(model)_%(season).png"
 cell_modal_json_template = "../../../../../../metrics_results/mean_climate/" + mip.upper() + "/" + exp + "/" + json_ver + "/%(variable)/%(model).%(variable)." + mip.upper() + "." + exp + ".regrid2.2p5x2p5."+json_ver+".json"
 
 no_target = "../missing.png"
 no_data = "../nodata.png"
+#no_data_json = "../nodata.json"
 
 # tooltop for axis label
 if flip:
