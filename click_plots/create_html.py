@@ -58,9 +58,9 @@ def write_modal_html(html_file, map_element, share_pth, pathout, modal=None, tit
             f.write("<p class=description>"+description+"</p>")
 
         # toggle image button
-        f.write("<style>p.button {margin-left: 25px;}</style>")
-        f.write("<p class=button>Colormaps: ")
         if toggle_image is not None:
+            f.write("<style>p.button {margin-left: 25px;}</style>")
+            f.write("<p class=button>Colormaps: ")
             for name in toggle_image:
                 if name == "default":
                     png_template.colormap = ""
