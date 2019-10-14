@@ -269,7 +269,7 @@
    }, 
    "xtic2": {
     "line": "default", 
-    "priority": 1, 
+    "priority": 0, 
     "y1": 0.15, 
     "y2": 0.45
    }, 
@@ -327,7 +327,7 @@
    }, 
    "ytic2": {
     "line": "default", 
-    "priority": 1, 
+    "priority": 0, 
     "x1": 0.05, 
     "x2": 0.85
    }, 
