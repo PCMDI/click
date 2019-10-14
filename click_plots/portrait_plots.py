@@ -170,10 +170,10 @@ class ClickablePortrait(Portrait):
                 meshfill.datawc_x1, meshfill.datawc_x2, meshfill.datawc_y1, meshfill.datawc_y2], png=png_file)
             click_labels_y2 = vcs.utils.axisToPngCoords([], meshfill, template, 'y2', [
                 meshfill.datawc_x1, meshfill.datawc_x2, meshfill.datawc_y1, meshfill.datawc_y2], png=png_file)
-            targets_lbls_y += [
-                meshfill.yticlabels2[k] for k in sorted(meshfill.yticlabels2)]
             targets_lbls_y = [
                 meshfill.yticlabels1[k] for k in sorted(meshfill.yticlabels1)]
+            targets_lbls_y += [
+                meshfill.yticlabels2[k] for k in sorted(meshfill.yticlabels2)]
             click_labels_y = numpy.concatenate((click_labels_y1, click_labels_y2))
 
         # when using multiple we have different shapes so we need to "extend"
@@ -184,7 +184,7 @@ class ClickablePortrait(Portrait):
             # ok less vertices in click area
             click_areas = add_extra_vertices(click_areas)
         if self.ylabels_tooltips_images_template is not None:
-            if click_areas.shape[-1] > click_labels_1.shape[-1]:
+            if click_areas.shape[-1] > click_labels_y.shape[-1]:
                 click_labels_y = add_extra_vertices(click_labels_y)
             elif click_areas.shape[-1] < click_labels_y.shape[-1]:
                 # ok less vertices in click area
