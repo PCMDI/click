@@ -227,6 +227,10 @@ class ClickablePortrait(Portrait):
 
         yaxis_list = data.getAxis(0).id.split("___")
         xaxis_list = data.getAxis(-1).id.split("___")
+        
+        yaxis_list = [y.strip() for y in yaxis_list]
+        xaxis_list = [x.strip() for x in xaxis_list]
+
         x_keys = x_key.split("_")
         y_keys = y_key.split("_")
         if sector is not None:
@@ -301,6 +305,12 @@ class ClickablePortrait(Portrait):
                     for merger in merge:
                         if merger[0] in x_keys:  # ok it applies
                             values = x_value.split("_")
+                            # temporaray solution start -- variable_region of mean climate
+                            if len(merger) == 2 and len(values) == 3:
+                                value0 = x_value.split("_")[0]
+                                value1 = x_value.split(value0 + '_')[1]
+                                values = [value0, value1]
+                            # temporary solution end -- jwlee
                             for value, key in zip(values, merger):
                                 for template_to_set in [self.cell_tooltips_images_template,
                                                         self.cell_modal_images_template,
